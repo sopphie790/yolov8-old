@@ -105,7 +105,7 @@ Include at least 5 screenshots showing:
 ## 🔗 Submission Links
 
 * 🌐 Live App: (add Streamlit link here)
-* 💻 GitHub Repository: (add GitHub link here)
+* 💻 GitHub Repository: https://github.com/sopphie790/yolov8-streamlit-app.git
 * 📄 Documentation: (add Google Docs link here)
 
 ---

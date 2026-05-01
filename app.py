@@ -9,8 +9,11 @@ import cv2
 # =========================
 @st.cache_resource
 def load_model():
-    # Gagamit tayo ng yolov8n.pt para mabilis sa laptop mo
-    return YOLO("yolov8n.pt")
+    try:
+        return YOLO("yolov8n.pt")
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None
 
 model = load_model()
 
@@ -25,63 +28,82 @@ st.info("Tip: Itaas ang liwanag ng paligid para sa mas tumpak na detection.")
 # Video Processing Function
 # =========================
 def video_frame_callback(frame):
-    img = frame.to_ndarray(format="bgr24")
-# TAMA NA IDs (YOLOv8 starts at 0):
-    # 0: person, 25: umbrella, 13: bench, 39: bottle, 41: cup, 63: laptop, 67: cell phone
-    allowed_classes = [0, 25, 13, 39, 41, 63, 67]
-    # Run YOLOv8 tracking
-    results = model.track(
-        img,
-        persist=True,
-        conf=0.50,      # Itinaas sa 0.50 para iwas sa maling hula
-        iou=0.5,        # Para hindi mag-overlap ang boxes
-        classes=allowed_classes, # Ipakita lang ang mga objects na ito
-        verbose=False
-    )
+    try:
+        img = frame.to_ndarray(format="bgr24")
 
-    annotated_frame = results[0].plot()
+        # Allowed classes
+        allowed_classes = [0, 25, 13, 39, 41, 63, 67]
 
-    # =========================
-    # 🔢 OBJECT COUNTING
-    # =========================
-    counts = {}
+        if model is None:
+            return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-    if results[0].boxes is not None:
-        for box in results[0].boxes:
-            cls = int(box.cls[0])
-            name = model.names[cls]
-            counts[name] = counts.get(name, 0) + 1
+        # Run YOLOv8 tracking
+        results = model.track(
+            img,
+            persist=True,
+            conf=0.50,
+            iou=0.5,
+            classes=allowed_classes,
+            verbose=False
+        )
 
-    # Display counts on screen (Upper Left)
-    y_offset = 35
-    for obj, count in counts.items():
-        text = f"{obj.upper()}: {count}"
+        annotated_frame = results[0].plot()
+
+        # =========================
+        # OBJECT COUNTING
+        # =========================
+        counts = {}
+
+        if results and results[0].boxes is not None:
+            for box in results[0].boxes:
+                cls = int(box.cls[0])
+                name = model.names.get(cls, str(cls))
+                counts[name] = counts.get(name, 0) + 1
+
+        # Display counts
+        y_offset = 35
+        for obj, count in counts.items():
+            text = f"{obj.upper()}: {count}"
+            cv2.putText(
+                annotated_frame,
+                text,
+                (15, y_offset),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.7,
+                (0, 255, 0),
+                2
+            )
+            y_offset += 30
+
+        # =========================
+        # ALERT SYSTEM
+        # =========================
+        if "person" in counts:
+            cv2.putText(
+                annotated_frame,
+                "ALERT: Person Detected!",
+                (15, y_offset + 20),
+                cv2.FONT_HERSHEY_DUPLEX,
+                1,
+                (0, 0, 255),
+                2
+            )
+
+        return av.VideoFrame.from_ndarray(annotated_frame, format="bgr24")
+
+    except Exception as e:
+        # fallback para hindi mag-crash
+        img = frame.to_ndarray(format="bgr24")
         cv2.putText(
-            annotated_frame,
-            text,
-            (15, y_offset),
+            img,
+            "ERROR",
+            (20, 50),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.7,
-            (0, 255, 0), # Green color para sa counts
-            2
-        )
-        y_offset += 30
-
-    # =========================
-    # 🚨 ALERT SYSTEM
-    # =========================
-    if "person" in counts:
-        cv2.putText(
-            annotated_frame,
-            "ALERT: Person Detected!",
-            (15, y_offset + 20),
-            cv2.FONT_HERSHEY_DUPLEX,
             1,
-            (0, 0, 255), # Red color para sa alert
+            (0, 0, 255),
             2
         )
-
-    return av.VideoFrame.from_ndarray(annotated_frame, format="bgr24")
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 # =========================
 # Start Webcam Stream

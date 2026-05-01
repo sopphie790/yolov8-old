@@ -35,9 +35,11 @@ The system demonstrates how computer vision and artificial intelligence work in 
 * Detects objects such as:
 
   * Person
-  * Cell phone
+  * laptop
   * Bottle
-  * Chair
+  * Umbrella
+  * Bench
+  * cup
 
 ### 📦 Object Tracking
 
@@ -71,7 +73,7 @@ pip install -r requirements.txt
 ### 2. Run the Application
 
 ```bash
-streamlit run app.py
+py -m streamlit run app.py
 ```
 
 ---

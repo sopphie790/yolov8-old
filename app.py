@@ -10,7 +10,7 @@ import cv2
 @st.cache_resource
 def load_model():
     try:
-        return YOLO("yolov8n.pt")
+        return YOLO("./yolov8n.pt")
     except Exception as e:
         st.error(f"Error loading model: {e}")
         return None

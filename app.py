@@ -1,119 +1,102 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer
 from ultralytics import YOLO
-import av
 import cv2
+import numpy as np
+from PIL import Image
+import tempfile
 
 # =========================
 # Load YOLOv8 Model (cached)
 # =========================
 @st.cache_resource
 def load_model():
-    try:
-        return YOLO("./yolov8n.pt")
-    except Exception as e:
-        st.error(f"Error loading model: {e}")
-        return None
+    return YOLO("./yolov8n.pt")
 
 model = load_model()
 
 # =========================
 # UI
 # =========================
-st.title("🎥 Live Object Detection & Tracking")
-st.write("Real-time AI object detection using YOLOv8 and webcam.")
-st.info("Tip: Itaas ang liwanag ng paligid para sa mas tumpak na detection.")
+st.title("🧠 AI Object Detection (Stable Version)")
+st.write("Upload an image or video for object detection using YOLOv8.")
+st.info("Stable version: No webcam, no crash during deployment.")
 
 # =========================
-# Video Processing Function
+# Allowed Classes
 # =========================
-def video_frame_callback(frame):
-    try:
-        img = frame.to_ndarray(format="bgr24")
+allowed_classes = [0, 25, 13, 39, 41, 63, 67]
 
-        # Allowed classes
-        allowed_classes = [0, 25, 13, 39, 41, 63, 67]
+# =========================
+# IMAGE UPLOAD
+# =========================
+st.subheader("📸 Image Detection")
+uploaded_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
-        if model is None:
-            return av.VideoFrame.from_ndarray(img, format="bgr24")
+if uploaded_image:
+    image = Image.open(uploaded_image)
+    img = np.array(image)
 
-        # Run YOLOv8 tracking
-        results = model.track(
-            img,
-            persist=True,
-            conf=0.50,
-            iou=0.5,
-            classes=allowed_classes,
-            verbose=False
-        )
+    results = model(img, conf=0.5)
 
-        annotated_frame = results[0].plot()
+    annotated = results[0].plot()
 
-        # =========================
-        # OBJECT COUNTING
-        # =========================
-        counts = {}
-
-        if results and results[0].boxes is not None:
-            for box in results[0].boxes:
-                cls = int(box.cls[0])
-                name = model.names.get(cls, str(cls))
+    # COUNT OBJECTS
+    counts = {}
+    if results[0].boxes is not None:
+        for box in results[0].boxes:
+            cls = int(box.cls[0])
+            if cls in allowed_classes:
+                name = model.names[cls]
                 counts[name] = counts.get(name, 0) + 1
 
-        # Display counts
-        y_offset = 35
-        for obj, count in counts.items():
-            text = f"{obj.upper()}: {count}"
-            cv2.putText(
-                annotated_frame,
-                text,
-                (15, y_offset),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.7,
-                (0, 255, 0),
-                2
-            )
-            y_offset += 30
-
-        # =========================
-        # ALERT SYSTEM
-        # =========================
-        if "person" in counts:
-            cv2.putText(
-                annotated_frame,
-                "ALERT: Person Detected!",
-                (15, y_offset + 20),
-                cv2.FONT_HERSHEY_DUPLEX,
-                1,
-                (0, 0, 255),
-                2
-            )
-
-        return av.VideoFrame.from_ndarray(annotated_frame, format="bgr24")
-
-    except Exception as e:
-        # fallback para hindi mag-crash
-        img = frame.to_ndarray(format="bgr24")
+    # DISPLAY COUNTS
+    for obj, count in counts.items():
         cv2.putText(
-            img,
-            "ERROR",
-            (20, 50),
+            annotated,
+            f"{obj.upper()}: {count}",
+            (15, 30 + list(counts.keys()).index(obj)*30),
             cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (0, 255, 0),
+            2
+        )
+
+    # ALERT
+    if "person" in counts:
+        cv2.putText(
+            annotated,
+            "ALERT: Person Detected!",
+            (15, 200),
+            cv2.FONT_HERSHEY_DUPLEX,
             1,
             (0, 0, 255),
             2
         )
-        return av.VideoFrame.from_ndarray(img, format="bgr24")
+
+    st.image(annotated, channels="BGR")
 
 # =========================
-# Start Webcam Stream
+# VIDEO UPLOAD (OPTIONAL)
 # =========================
-webrtc_streamer(
-    key="object-detection",
-    video_frame_callback=video_frame_callback,
-    async_processing=True,
-    rtc_configuration={
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    },
-    media_stream_constraints={"video": True, "audio": False},
-)
+st.subheader("🎥 Video Detection (Optional)")
+uploaded_video = st.file_uploader("Upload a video", type=["mp4", "mov", "avi"])
+
+if uploaded_video:
+    tfile = tempfile.NamedTemporaryFile(delete=False)
+    tfile.write(uploaded_video.read())
+
+    cap = cv2.VideoCapture(tfile.name)
+
+    stframe = st.empty()
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        results = model(frame, conf=0.5)
+        annotated = results[0].plot()
+
+        stframe.image(annotated, channels="BGR")
+
+    cap.release()

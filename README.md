@@ -1,101 +1,70 @@
-# 🎥 Live Object Detection & Tracking using YOLOv8
+🎥 Live Object Detection & Tracking using YOLOv8
+##📌 Project Overview
+This project is a real-time AI-powered web application built using Streamlit and YOLOv8 (Ultralytics). It utilizes a webcam feed to detect, track, and label specific objects in real-time with high-precision bounding boxes.
 
-## 📌 Project Overview
+The system demonstrates the practical application of computer vision and artificial intelligence in live environments by processing video frames instantly.
 
-This project is a real-time AI-powered web application built using **Streamlit** and **YOLOv8 (Ultralytics)**. It uses a webcam to detect, track, and label objects in real time with bounding boxes.
+##🎯 Objectives
+To understand real-time computer vision and image processing concepts.
+To apply state-of-the-art AI object detection using the YOLOv8 architecture.
+To build and deploy an interactive web application using the Streamlit framework.
+To implement persistent object tracking across continuous video frames.
 
-The system demonstrates how computer vision and artificial intelligence work in live environments by processing video frames instantly.
+##⚙️ Technologies Used
+Python: Core programming language.
+Streamlit: Web interface framework.
+YOLOv8 (Ultralytics): Object detection and tracking engine.
+OpenCV / PyAV: Image and video frame processing.
+streamlit-webrtc: Real-time webcam streaming for web browsers.
+PyTorch: Deep learning backend.
 
----
+##🚀 Features
+🔍 Real-Time Object Detection
+The model is optimized to detect specific classes:
 
-## 🎯 Objectives
+Person (Class 0)
+Umbrella (Class 25)
+Bench (Class 13)
+Bottle (Class 39)
+Cup (Class 41)
+Laptop (Class 63)
+Cell Phone (Class 67)
 
-* To understand real-time computer vision concepts
-* To apply AI object detection using YOLOv8
-* To build an interactive web application using Streamlit
-* To implement object tracking across video frames
+##📦 Object Tracking
+Assigns unique Tracking IDs to objects across frames to maintain identity during movement.
 
----
+##🔢 Object Counting
+Dynamically displays the total number of detected objects on the screen.
 
-## ⚙️ Technologies Used
+##🚨 Alert System
+Triggers a visual "ALERT: Person Detected!" notification when a person enters the frame.
 
-* Python
-* Streamlit
-* YOLOv8 (Ultralytics)
-* OpenCV
-* streamlit-webrtc
-* PyTorch
+##💾 Frame Saving
+Automatically captures and saves processed frames for documentation and analysis.
 
----
-
-## 🚀 Features
-
-### 🔍 Real-Time Object Detection
-
-* Detects objects such as:
-
-  * Person
-  * laptop
-  * Bottle
-  * Umbrella
-  * Bench
-  * cup
-
-### 📦 Object Tracking
-
-* Tracks objects across frames
-* Maintains identity of moving objects
-
-### 🔢 Object Counting
-
-* Displays number of detected objects on screen
-
-### 🚨 Alert System
-
-* Shows warning when a person is detected
-
-### 💾 Frame Saving
-
-* Automatically saves detected frames as images
-
----
-
-## ▶️ How to Run the Project
-
-### 1. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-### 2. Run the Application
-
-```bash
+##▶️ How to Run the Project
+1. Install Dependencies
+pip install streamlit streamlit-webrtc ultralytics opencv-python av torch torchvision numpy pillow scipy matplotlib
+2. Run the Application
 py -m streamlit run app.py
-```
-
----
-
-### 3. Open in Browser
-
-```
+3. Open in Browser
 http://localhost:8501
-```
-
----
+ 
 
 ## 📁 Project Structure
 
 ```
 object-detection-app/
 │
-├── app.py
-├── requirements.txt
-├── README.md
-└── screenshots/ (optional)
-```
+├── app.py              # Main application logic
+├── requirements.txt    # Python library dependencies
+├── packages.txt        # System-level dependencies for Cloud deployment
+├── yolov8n.pt          # Pre-trained YOLOv8 model weights
+├── README.md           # Project documentation
+└── screenshots/        # Saved detection frames and samples
+    ├── bench.png
+    ├── cup.png
+    └── umbrella.png
 
 ---
 
@@ -141,10 +110,10 @@ Include at least 5 screenshots showing:
 
 ---
 
-## 👨‍💻 Developer
-
-LIZA S. JAIME_BSCS-3A
-
+👨‍💻 Developer
+LIZA S. JAIME
+3rd Year Computer Science Student
+DEBESMSCAT
 ---
 
 ## 📌 Note

@@ -153,7 +153,7 @@ def detect(frame):
     # =========================
     # STORE DETECTIONS (FIXED STRUCTURE)
     # =========================
-   def detect(frame):
+    def detect(frame):
     
     # FORCE SAFE FORMAT
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)

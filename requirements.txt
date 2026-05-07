@@ -1,7 +1,7 @@
-streamlit==1.32.0
-ultralytics==8.0.196
-torch==2.1.2
-torchvision==0.16.2
+streamlit
+streamlit-webrtc==0.47.1
+opencv-python
 numpy
 pillow
-opencv-python-headless
+ultralytics
+av

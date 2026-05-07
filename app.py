@@ -284,7 +284,7 @@ def detect(frame):
         "frame": len(st.session_state.detections),
         "objects": unique_detected
         })
-        
+
         st.session_state.timeline.append({
         "frame": len(st.session_state.timeline),
         "objects": unique_detected,
@@ -358,7 +358,8 @@ if st.session_state.detections:
     all_objects = []
 
     for item in st.session_state.detections:
-        all_objects.extend(item["objects"])
+        if "objects" in item:
+             all_objects.extend(item["objects"])
 
     counter = Counter(all_objects)
 
@@ -383,7 +384,8 @@ if st.session_state.detections:
     heat_objects = []
 
     for item in st.session_state.detections:
-        heat_objects.extend(item["objects"])
+        if "objects" in item:
+            heat_objects.extend(item["objects"])
 
     heat_data = Counter(heat_objects)
 

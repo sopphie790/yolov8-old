@@ -153,7 +153,7 @@ with st.sidebar:
         ["📡 Live Camera", "🖼 Upload Image"]
     )
 
-    CONF = st.slider("🎯 Confidence", 0.1, 1.0, 0.45)
+    CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
 
 # =========================
 # MAIN TITLE

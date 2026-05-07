@@ -1,68 +1,41 @@
 import streamlit as st
 from ultralytics import YOLO
+import cv2
 import numpy as np
 from PIL import Image
-import cv2
-from datetime import datetime
 import pandas as pd
-import matplotlib.pyplot as plt
+from datetime import datetime
+import sqlite3
 
 # =========================
 # PAGE CONFIG
 # =========================
 st.set_page_config(
-    page_title="AI Vision Alert System",
+    page_title="AI Surveillance System",
     page_icon="🚨",
     layout="wide"
 )
+
 # =========================
-# 👤 PROFILE FRAME CARD
-# =========================
-st.markdown("""
-<div style="
-    background: rgba(255,255,255,0.08);
-    padding: 15px;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0px 0px 15px rgba(255, 77, 166, 0.4);
-    margin-bottom: 15px;
-">
-    <img src="https://i.imgur.com/8Km9tLL.png"
-         style="
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #ff4da6;
-            object-fit: cover;
-            margin-bottom: 10px;
-        ">
-    <h4 style="color:white; margin-bottom:5px;">👩‍💻 Developer</h4>
-    <p style="color:#ffd1e8; margin:0;">Liza S. Jaime</p>
-    <p style="color:#ffffffaa; font-size:12px;">BSCS - 3A</p>
-</div>
-""", unsafe_allow_html=True)
-# =========================
-# UI DESIGN FIXED
+# CUSTOM PINK GLITTER UI
 # =========================
 st.markdown("""
 <style>
+
+/* BACKGROUND */
 .main {
-    background-color: #0e1117;
+    background: radial-gradient(circle at top left, #0f172a, #020617);
+    color: white;
 }
 
-/* SIDEBAR BASE */
+/* SIDEBAR PINK */
 [data-testid="stSidebar"] {
-    background: linear-gradient(
-        180deg,
-        rgba(255, 77, 166, 0.65),
-        rgba(255, 26, 117, 0.65)
-    );
-    backdrop-filter: blur(14px);
+    background: linear-gradient(180deg, #ff4da6, #ff1a75);
     position: relative;
     overflow: hidden;
 }
 
-/* ✨ MASSIVE MICRO GLITTER FIELD */
+/* STAR GLITTER EFFECT */
 [data-testid="stSidebar"]::before {
     content: "";
     position: absolute;
@@ -72,56 +45,21 @@ st.markdown("""
     left: -100%;
 
     background-image:
-        radial-gradient(circle, rgba(255,215,0,0.9) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px);
+        radial-gradient(circle, white 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px);
 
-    background-size: 14px 14px, 22px 22px, 30px 30px;
+    background-size: 18px 18px, 28px 28px;
 
-    animation: glitterFlow 16s linear infinite;
+    animation: floatStars 12s linear infinite;
 
-    opacity: 0.5;
+    opacity: 0.4;
     pointer-events: none;
 }
 
-/* ✨ SECOND TWINKLE LAYER */
-[data-testid="stSidebar"]::after {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;
-
-    background-image: radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 2px);
-    background-size: 18px 18px;
-
-    animation: twinkle 5s ease-in-out infinite alternate;
-
-    opacity: 0.25;
-    pointer-events: none;
-}
-
-/* MOVING GLITTER */
-@keyframes glitterFlow {
-    0% {
-        transform: translate(0, 0);
-    }
-    100% {
-        transform: translate(220px, -220px);
-    }
-}
-
-/* TWINKLE EFFECT */
-@keyframes twinkle {
-    0% {
-        opacity: 0.1;
-        transform: scale(1);
-    }
-    100% {
-        opacity: 0.6;
-        transform: scale(1.2);
-    }
+/* FLOATING STARS */
+@keyframes floatStars {
+    0% {transform: translate(0,0);}
+    100% {transform: translate(150px,-150px);}
 }
 
 /* SIDEBAR TEXT */
@@ -130,26 +68,30 @@ st.markdown("""
     font-weight: 600;
 }
 
+/* PROFILE CARD */
+.profile-card {
+    background: rgba(255,255,255,0.15);
+    padding: 15px;
+    border-radius: 18px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 0px 20px rgba(255,255,255,0.2);
+}
+
 /* BUTTON */
 .stButton>button {
-    background: linear-gradient(90deg, #ff4da6, #ff1a75);
-    color: white;
-    border-radius: 12px;
-    border: none;
-    padding: 0.6em 1em;
-    font-weight: bold;
     width: 100%;
+    background: white;
+    color: #ff1a75;
+    font-weight: bold;
+    border-radius: 12px;
 }
 
-.stButton>button:hover {
-    color: black !important;
-    transform: scale(1.03);
-}
-
-/* TITLES */
-h1, h2, h3 {
+/* TITLE */
+h1 {
     color: white;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -162,178 +104,173 @@ def load_model():
 
 model = load_model()
 
-CONF_THRESHOLD = 0.15
+# =========================
+# LOGIN CHECK (keep your system)
+# =========================
+if "login" not in st.session_state:
+    st.session_state.login = True
+    st.session_state.user = "admin"
 
 # =========================
-# ALERT SYSTEM
+# SIDEBAR UI (UPGRADED)
 # =========================
-if "alerts" not in st.session_state:
-    st.session_state.alerts = []
+with st.sidebar:
 
-if "last_alert" not in st.session_state:
-    st.session_state.last_alert = ""
+    st.title("DASHBOARD")
 
-def check_alerts(detected_classes):
-    alert_keywords = ["person", "car", "truck", "knife", "bottle"]
+    # =========================
+    # CSS
+    # =========================
+    st.markdown("""
+    <style>
 
-    triggered = [obj for obj in detected_classes if obj in alert_keywords]
+    .profile-name {
+        text-align:center;
+        color:white;
+        font-size:22px;
+        font-weight:bold;
+        margin-bottom:0;
+    }
 
-    if triggered:
-        alert_msg = f"🚨 ALERT: {', '.join(set(triggered))} detected!"
+    .profile-course {
+        text-align:center;
+        color:#ffd1e8;
+        font-size:14px;
+        margin-top:0;
+    }
 
-        if alert_msg != st.session_state.last_alert:
-            st.session_state.alerts.append({
-                "time": datetime.now().strftime("%H:%M:%S"),
-                "message": alert_msg
-            })
-            st.session_state.last_alert = alert_msg
+    /* RADIO BUTTON STYLE */
+    div[data-baseweb="radio"] > div {
+        background: rgba(255,255,255,0.08);
+        padding: 12px;
+        border-radius: 14px;
+        margin-bottom: 10px;
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(8px);
+    }
 
-        return alert_msg
+    label {
+        color:white !important;
+        font-weight:600 !important;
+    }
 
-    return None
+    </style>
+    """, unsafe_allow_html=True)
+
+    # =========================
+    # CENTER IMAGE
+    # =========================
+    col1, col2, col3 = st.columns([1,2,1])
+
+    with col2:
+        st.image("profile.png", width=130)
+
+    # =========================
+    # PROFILE TEXT
+    # =========================
+    st.markdown("""
+    <p class="profile-name">Liza S. Jaime</p>
+    <p class="profile-course">BSCS - A</p>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # =========================
+    # MODE BUTTONS
+    # =========================
+    mode = st.radio(
+        "📌 Select Mode",
+        ["📡 Live Camera", "🖼 Upload Image"],
+        key="mode_radio"
+    )
+
+    # =========================
+    # CONFIDENCE
+    # =========================
+    CONF = st.slider(
+        "🎯 Confidence",
+        0.1,
+        1.0,
+        0.25,
+        key="confidence_slider"
+    )
+    st.markdown("---")
+
+
+# =========================
+# TITLE MAIN
+# =========================
+st.title("🎥 Live Object Detection & Tracing")
+st.caption("Point your camera at objects to identify them in real-time")
 
 # =========================
 # DETECTION FUNCTION
 # =========================
 def detect(frame):
-    results = model.predict(frame, conf=CONF_THRESHOLD, verbose=False)
 
-    annotated = results[0].plot()
+    results = model.predict(frame, conf=CONF, verbose=False)
+
+    frame_out = results[0].plot()
+
+    detected = []
 
     boxes = results[0].boxes
 
-    classes = []
-    class_count = {}
-
     if boxes is not None:
-        for c in boxes.cls:
+
+        for i, c in enumerate(boxes.cls):
+
             name = model.names[int(c)]
-            classes.append(name)
+            detected.append(name)
 
-            if name in class_count:
-                class_count[name] += 1
-            else:
-                class_count[name] = 1
-
-    alert = check_alerts(classes)
-
-    total_count = sum(class_count.values())
-
-    return annotated, total_count, classes, alert, class_count
+    return frame_out, detected
 
 # =========================
-# 🔥 AI ANALYTICS DASHBOARD
+# LIVE CAMERA
 # =========================
-def render_analytics(class_count):
-    if not class_count:
-        return
+if mode == "📡 Live Camera":
 
-    df = pd.DataFrame(list(class_count.items()), columns=["Object", "Count"])
+    run = st.checkbox("Start Camera")
 
-    st.subheader("📊 AI Analytics Dashboard")
+    if run:
 
-    top = df.sort_values("Count", ascending=False).iloc[0]
+        cap = cv2.VideoCapture(0)
 
-    col1, col2 = st.columns(2)
+        frame_box = st.empty()
 
-    with col1:
-        st.metric("Top Object", top["Object"])
+        while run:
 
-    with col2:
-        st.metric("Highest Count", int(top["Count"]))
+            ret, frame = cap.read()
 
-    fig, ax = plt.subplots()
-    ax.bar(df["Object"], df["Count"])
-    ax.set_title("Detection Breakdown")
-    ax.set_xlabel("Objects")
-    ax.set_ylabel("Count")
-    plt.xticks(rotation=45)
+            if not ret:
+                break
 
-    st.pyplot(fig)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            result, detected = detect(frame)
+
+            frame_box.image(result)
+
+        cap.release()
 
 # =========================
-# SIDEBAR
+# UPLOAD IMAGE
 # =========================
-with st.sidebar:
-    st.header("⚙️ Control Panel")
+elif mode == "🖼 Upload Image":
 
-    mode = st.selectbox("Select Mode", ["Live Camera", "Upload Image"])
+    file = st.file_uploader("Upload Image")
 
-    st.markdown("---")
+    if file:
 
-    st.subheader("🚨 AI Alerts")
+        img = Image.open(file).convert("RGB")
+        img = np.array(img)
 
-    if st.session_state.alerts:
-        for a in reversed(st.session_state.alerts[-5:]):
-            st.error(f"{a['time']} - {a['message']}")
-    else:
-        st.info("No alerts yet")
-        st.markdown("---")
-        st.markdown("### 👩‍💻 Developer")
-        st.markdown("Liza S. Jaime")
-        st.markdown("BSCS - 3A")
-
-# =========================
-# MAIN APP
-# =========================
-
-if mode == "Live Camera":
-    st.subheader("🎥 Live Object Detection & Tracing")
-    st.write("Point your camera at objects to identify them in real-time.")
-
-    img_file = st.camera_input("Open Camera")
-
-    if img_file:
-        image = Image.open(img_file).convert("RGB")
-        image = np.array(image)
-
-        processed, count, classes, alert, class_count = detect(image)
-
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            st.image(image, caption="Original")
-
-        with col2:
-            st.image(processed, caption="AI Detection")
-
-        with col3:
-            st.metric("Objects", count)
-
-        if alert:
-            st.error(alert)
-
-        st.write("Detected Objects:", list(set(classes)))
-        st.write("Class Breakdown:", class_count)
-
-        render_analytics(class_count)
-
-elif mode == "Upload Image":
-    st.subheader("🖼️ AI Detection + Alert System")
-    st.write("Upload an image to analyze it for object detection and alerts.")
-
-    uploaded = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"])
-
-    if uploaded:
-        image = Image.open(uploaded).convert("RGB")
-        image = np.array(image)
-
-        processed, count, classes, alert, class_count = detect(image)
+        result, detected = detect(img)
 
         col1, col2 = st.columns(2)
 
         with col1:
-            st.image(image, caption="Original")
+            st.image(img, caption="Original")
 
         with col2:
-            st.image(processed, caption="Detected")
-
-        st.metric("Objects Detected", count)
-
-        if alert:
-            st.error(alert)
-
-        st.write("Detected Objects:", list(set(classes)))
-        st.write("Class Breakdown:", class_count)
-
-        render_analytics(class_count)
+            st.image(result, caption="AI Detection")

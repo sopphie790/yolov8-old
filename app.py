@@ -165,7 +165,7 @@ st.caption("AI-powered real-time object detection system with YOLOv8")
 # DETECTION FUNCTION
 # =========================
 def detect(frame):
-    
+
     frame_rgb = np.array(frame)
 
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)

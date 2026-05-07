@@ -245,12 +245,13 @@ with st.sidebar:
     st.markdown("---")
 
     # 👇 DITO ILALAGAY
-    st.markdown("### 📌 Select Mode")
+    st.markdown("")
 
     if 'selected_mode' not in st.session_state:
         st.session_state['selected_mode'] = "Live Camera"
 
     mode = st.sidebar.selectbox(
+        "Select Mode",
         options=["Live Camera", "Image Upload"],
         index=0,
         key="mode_selection"

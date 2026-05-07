@@ -280,19 +280,19 @@ with st.sidebar:
         }
         .mode-btn.active {
             background: linear-gradient(90deg, #ff5dab, #ff3366);
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(0, 0, 0, 0.95);
             border: 2px solid rgba(255, 25, 97, 0.9);
             box-shadow: 0 12px 25px rgba(255, 50, 110, 0.18);
         }
         .mode-btn.inactive {
             background: #fafafa;
-            color: rgba(68, 68, 68, 0.65);
+            color: rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(221, 221, 221, 0.9);
         }
         .mode-btn,
         .mode-btn.active,
         .mode-btn.inactive {
-            text-shadow: 0 0 1px rgba(255,255,255,0.25);
+            text-shadow: none;
         }
         </style>
         """,

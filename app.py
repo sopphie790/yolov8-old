@@ -176,6 +176,32 @@ def detect(frame):
     return annotated_frame, detected
 
 # =========================
+# IMAGE UPLOAD
+# =========================
+elif mode == "🖼 Upload Image":
+
+    st.subheader("🖼 Upload Detection")
+
+    file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+
+    if file is not None:
+
+        img = Image.open(file).convert("RGB")
+        frame = np.array(img)
+
+        result, detected = detect(frame)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.image(frame, caption="Original Image")
+
+        with col2:
+            st.image(result, caption="AI Detection")
+
+        st.success(f"Detected Objects: {', '.join(set(detected))}")
+
+# =========================
 # 📊 ANALYTICS (FIXED & SYNCHED)
 # =========================
 

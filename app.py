@@ -179,7 +179,6 @@ def detect(frame):
     # STORE DETECTIONS
     # =========================
     if detected:
-        if detected:
         unique_detected = list(set(detected))
         st.session_state.detections.extend(unique_detected)
 

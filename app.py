@@ -298,7 +298,7 @@ def detect(frame):
         verbose=False
     )
 
-else:
+    else:
 
     results = model.predict(
         source=frame_bgr,

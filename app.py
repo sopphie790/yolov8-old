@@ -417,7 +417,7 @@ if mode == "📡 Live Camera":
         image = Image.open(camera).convert("RGB")
         frame = np.array(image)
 
-        result, detected = detect(frame, record_analytics=False)
+        result, detected = detect(frame, record_analytics=True)
 
         col1, col2 = st.columns(2)
 

@@ -264,12 +264,22 @@ with st.sidebar:
     st.markdown(
         """
         <style>
-        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
-            display: block;
-            margin-bottom: 14px;
+        [data-testid="stSidebar"] .stRadio {
+            gap: 0 !important;
         }
-        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:last-child {
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
+            display: flex;
+            align-items: center;
             margin-bottom: 0;
+            cursor: pointer;
+        }
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label span {
+            display: none !important;
         }
         [data-testid="stSidebar"] .stRadio button {
             width: 100%;
@@ -286,6 +296,7 @@ with st.sidebar:
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            margin: 0;
         }
         [data-testid="stSidebar"] .stRadio button::before {
             content: '';

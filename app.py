@@ -139,11 +139,19 @@ st.caption("Point your camera at objects to identify them in real-time")
 # =========================
 def detect(frame):
     
-    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+    # ✔ KEEP ORIGINAL CLEAN RGB
+    frame_rgb = np.array(frame)
 
-    results = model.predict(frame, conf=CONF, verbose=False)
+    # ✔ CONVERT ONLY FOR YOLO INPUT
+    frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
 
+    results = model.predict(frame_bgr, conf=CONF, verbose=False)
+
+    # ✔ YOLO OUTPUT (BGR)
     annotated_frame = results[0].plot()
+
+    # 🔥 FIX COLOR BACK TO RGB (IMPORTANT)
+    annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
 
     detected = []
 

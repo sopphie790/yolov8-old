@@ -17,11 +17,12 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================
-# LIGHT PINK MODERN UI/UX (UNCHANGED)
-# =========================
 st.markdown("""
 <style>
+
+/* =========================
+LIGHT PINK MODERN UI/UX
+========================= */
 
 .main {
     background: linear-gradient(135deg, #ffe4ec, #fff0f5);
@@ -48,6 +49,7 @@ st.markdown("""
     box-shadow: 0px 0px 15px rgba(255,255,255,0.6);
 }
 
+/* PROFILE */
 .profile-name {
     text-align:center;
     font-size:22px;
@@ -62,12 +64,14 @@ st.markdown("""
     opacity:0.9;
 }
 
+/* IMAGE */
 div[data-testid="stImage"] {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0px 6px 20px rgba(0,0,0,0.1);
 }
 
+/* BUTTON */
 .stButton > button {
     background: linear-gradient(90deg, #ff69b4, #ff85c1);
     color: white;
@@ -77,14 +81,10 @@ div[data-testid="stImage"] {
     padding: 0.6rem 1rem;
 }
 
+/* TITLES */
 h1, h2, h3 {
     color: #d63384;
 }
-
-</style>
-""", unsafe_allow_html=True)
-st.markdown("""
-<style>
 
 /* =========================
 PROFESSIONAL SIDEBAR BUTTON STYLE
@@ -105,11 +105,13 @@ div[data-baseweb="radio"] > div:hover {
     background: rgba(255, 255, 255, 0.25) !important;
 }
 
+/* SELECTED */
 div[role="radiogroup"] label[data-selected="true"] {
     background: rgba(255, 255, 255, 0.35) !important;
     border-radius: 16px;
 }
 
+/* TEXT STYLE */
 div[data-baseweb="radio"] span {
     color: rgba(255, 255, 255, 0.75) !important;
     font-weight: 600;

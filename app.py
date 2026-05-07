@@ -280,10 +280,11 @@ def detect(frame):
 
         unique_detected = list(set(detected))
 
-        st.session_state.detections = [{
+        st.session_state.detections.append({
         "frame": len(st.session_state.detections),
         "objects": unique_detected
-        }]
+        })
+        
         st.session_state.timeline.append({
         "frame": len(st.session_state.timeline),
         "objects": unique_detected,
@@ -375,10 +376,6 @@ if st.session_state.detections:
 # 🔥 HEATMAP
 # =========================
 
-# =========================
-# 🔥 HEATMAP
-# =========================
-
 st.markdown("### 🔥 Detection Heatmap")
 
 if st.session_state.detections:
@@ -421,7 +418,7 @@ if st.session_state.timeline:
 
     fig, ax = plt.subplots()
 
-    ax.plot(df["frame"], df["count"], marker="o")
+    ax.plot(df["frame"], df["count"], marker="o", linestyle="-")
 
     ax.set_xlabel("Frame")
     ax.set_ylabel("Objects Detected")

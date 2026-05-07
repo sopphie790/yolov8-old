@@ -266,28 +266,36 @@ with st.sidebar:
         <style>
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         [data-testid="stSidebar"] .stRadio button {
             width: 100%;
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 14px 18px;
-            border: 1px solid #ddd;
-            background: #fafafa;
-            color: #111;
+            border: 2px solid #e0e0e0;
+            background: #ffffff;
+            color: rgba(0, 0, 0, 0.7);
             font-weight: 700;
             font-size: 15px;
-            text-align: left;
-            transition: all 0.15s ease;
-        }
-        [data-testid="stSidebar"] .stRadio button[aria-checked="true"] {
-            background: linear-gradient(90deg,#ff5dab,#ff3366);
-            color: #000;
-            border: 2px solid #ff1961;
-            box-shadow: 0 12px 25px rgba(255,50,110,0.18);
+            text-align: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
         [data-testid="stSidebar"] .stRadio button:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            border-color: #ff5dab;
+            box-shadow: 0 8px 16px rgba(255, 93, 171, 0.12);
+            color: rgba(0, 0, 0, 0.85);
+        }
+        [data-testid="stSidebar"] .stRadio button[aria-checked="true"] {
+            background: linear-gradient(90deg, #ff5dab, #ff3366);
+            color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff1961;
+            box-shadow: 0 12px 28px rgba(255, 50, 110, 0.22);
+        }
+        [data-testid="stSidebar"] .stRadio button[aria-checked="true"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px rgba(255, 50, 110, 0.28);
         }
         </style>
         """,

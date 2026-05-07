@@ -250,13 +250,14 @@ with st.sidebar:
     if "mode" not in st.session_state:
         st.session_state.mode = "📡 Live Camera"
 
-    mode = st.radio(
-        "",
-        ("📡 Live Camera", "🖼 Upload Image"),
-        index=0 if st.session_state.mode == "📡 Live Camera" else 1,
-        key="mode_radio",
-        label_visibility="collapsed",
-        horizontal=False,
+    mode_options = ["📡 Live Camera", "🖼 Upload Image"]
+    current_index = 0 if st.session_state.mode == "📡 Live Camera" else 1
+
+    mode = st.selectbox(
+        "Select Mode",
+        mode_options,
+        index=current_index,
+        key="mode_select",
     )
 
     st.session_state.mode = mode
@@ -264,73 +265,8 @@ with st.sidebar:
     st.markdown(
         """
         <style>
-        [data-testid="stSidebar"] .stRadio {
-            gap: 0 !important;
-        }
-        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label span {
-            display: none !important;
-        }
-        [data-testid="stSidebar"] .stRadio button {
-            width: 100%;
-            border-radius: 12px;
-            padding: 13px 16px;
-            border: 1.5px solid #e8e8e8;
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            color: rgba(0, 0, 0, 0.72);
-            font-weight: 600;
-            font-size: 14px;
-            letter-spacing: 0.3px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            margin: 0;
-        }
-        [data-testid="stSidebar"] .stRadio button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.5);
-            transition: left 0.35s ease;
-            pointer-events: none;
-        }
-        [data-testid="stSidebar"] .stRadio button:hover {
-            transform: translateY(-3px);
-            border-color: #d0d0d0;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-            color: rgba(0, 0, 0, 0.85);
-        }
-        [data-testid="stSidebar"] .stRadio button:hover::before {
-            left: 100%;
-        }
-        [data-testid="stSidebar"] .stRadio button[aria-checked="true"] {
-            background: linear-gradient(135deg, #ff5dab 0%, #ff3366 100%);
-            color: rgba(0, 0, 0, 0.78);
-            border: 1.5px solid #ff1961;
-            box-shadow: 0 14px 32px rgba(255, 50, 110, 0.25);
-            font-weight: 700;
-        }
-        [data-testid="stSidebar"] .stRadio button[aria-checked="true"]::before {
-            background: rgba(255, 255, 255, 0.35);
-        }
-        [data-testid="stSidebar"] .stRadio button[aria-checked="true"]:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 40px rgba(255, 50, 110, 0.32);
+        [data-testid="stSidebar"] [data-baseweb="select"] {
+            border-radius: 12px !important;
         }
         </style>
         """,

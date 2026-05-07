@@ -141,11 +141,9 @@ div[data-testid="stSidebar"] button:hover {
     cursor: pointer;
 }
 
-/* CLICKED BUTTON LOOK (active feel) */
 div[data-testid="stSidebar"] button:active {
     background: rgba(255, 255, 255, 0.35) !important;
 }
-            <style>
 
 /* =========================
    ACTIVE SIDEBAR BUTTON STATE
@@ -227,21 +225,32 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # 👇 DITO ILALAGAY
     st.markdown("### 📌 Select Mode")
 
-    if "mode" not in st.session_state:
-        st.session_state.mode = "📡 Live Camera"
+if "mode" not in st.session_state:
+    st.session_state.mode = "📡 Live Camera"
 
-    if st.button("📡 Live Camera", use_container_width=True):
-        st.session_state.mode = "📡 Live Camera"
+# =========================
+# LIVE CAMERA BUTTON
+# =========================
+if st.button(
+    "📡 Live Camera",
+    use_container_width=True,
+    type="primary" if st.session_state.mode == "📡 Live Camera" else "secondary"
+):
+    st.session_state.mode = "📡 Live Camera"
 
-    if st.button("🖼 Upload Image", use_container_width=True):
-        st.session_state.mode = "🖼 Upload Image"
+# =========================
+# UPLOAD IMAGE BUTTON
+# =========================
+if st.button(
+    "🖼 Upload Image",
+    use_container_width=True,
+    type="primary" if st.session_state.mode == "🖼 Upload Image" else "secondary"
+):
+    st.session_state.mode = "🖼 Upload Image"
 
-    mode = st.session_state.mode
-
-    CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
+mode = st.session_state.mode
 # =========================
 # TITLE
 # =========================

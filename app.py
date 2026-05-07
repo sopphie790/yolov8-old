@@ -186,11 +186,11 @@ with st.sidebar:
 
     st.markdown("---")
 
-    mode = st.radio(
-        "📌 Select Mode",
-        ["📡 Live Camera", "🖼 Upload Image"]
-    )
+    if st.button("📡 Live Camera"):
+        st.session_state.mode = "camera"
 
+    if st.button("🖼 Upload Image"):
+        st.session_state.mode = "upload"
     CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
 
 # =========================

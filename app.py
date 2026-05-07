@@ -261,6 +261,39 @@ with st.sidebar:
 
     st.session_state.mode = mode
 
+    st.markdown(
+        """
+        <style>
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        [data-testid="stSidebar"] .stRadio button {
+            width: 100%;
+            border-radius: 14px;
+            padding: 14px 18px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+            color: #111;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: left;
+            transition: all 0.15s ease;
+        }
+        [data-testid="stSidebar"] .stRadio button[aria-checked="true"] {
+            background: linear-gradient(90deg,#ff5dab,#ff3366);
+            color: #000;
+            border: 2px solid #ff1961;
+            box-shadow: 0 12px 25px rgba(255,50,110,0.18);
+        }
+        [data-testid="stSidebar"] .stRadio button:hover {
+            transform: translateY(-1px);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.session_state.CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
     # 🔥 ADVANCED SETTINGS
     st.session_state.IOU = st.slider("📦 IOU Threshold", 0.1, 1.0, 0.5)

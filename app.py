@@ -179,7 +179,9 @@ def detect(frame):
     # STORE DETECTIONS
     # =========================
     if detected:
-        st.session_state.detections.extend(detected)
+        if detected:
+        unique_detected = list(set(detected))
+        st.session_state.detections.extend(unique_detected)
 
         # timeline tracking
         st.session_state.timeline.append({

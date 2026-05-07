@@ -186,13 +186,21 @@ with st.sidebar:
 
     st.markdown("---")
 
-    if st.button("📡 Live Camera"):
-        st.session_state.mode = "camera"
+    # 👇 DITO ILALAGAY
+    st.markdown("### 📌 Select Mode")
 
-    if st.button("🖼 Upload Image"):
-        st.session_state.mode = "upload"
+    if "mode" not in st.session_state:
+        st.session_state.mode = "📡 Live Camera"
+
+    if st.button("📡 Live Camera", use_container_width=True):
+        st.session_state.mode = "📡 Live Camera"
+
+    if st.button("🖼 Upload Image", use_container_width=True):
+        st.session_state.mode = "🖼 Upload Image"
+
+    mode = st.session_state.mode
+
     CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
-
 # =========================
 # TITLE
 # =========================

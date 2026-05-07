@@ -277,9 +277,10 @@ with st.sidebar:
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
         }
 
-        [data-testid="stSidebar"] div[data-baseweb="select"] span {
+        [data-testid="stSidebar"] div[data-baseweb="select"] span,
+        [data-testid="stSidebar"] div[data-baseweb="select"] select {
             font-size: 15px;
-            color: #111;
+            color: #333333 !important;
             font-weight: 600;
         }
 

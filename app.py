@@ -6,6 +6,7 @@ from PIL import Image
 import pandas as pd
 from collections import Counter
 import matplotlib.pyplot as plt
+import time
 
 # =========================
 # PAGE CONFIG
@@ -80,22 +81,6 @@ h1, h2, h3 {
     color: #d63384;
 }
 
-.alert-box {
-    animation: flash 1s infinite;
-    background-color: #ff4d4d;
-    color: white;
-    padding: 12px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-@keyframes flash {
-    0% {opacity: 1;}
-    50% {opacity: 0.3;}
-    100% {opacity: 1;}
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -109,16 +94,13 @@ def load_model():
 model = load_model()
 
 # =========================
-# SESSION STATE
+# ANALYTICS STORAGE
 # =========================
 if "detections" not in st.session_state:
     st.session_state.detections = []
 
 if "timeline" not in st.session_state:
     st.session_state.timeline = []
-
-if "alert" not in st.session_state:
-    st.session_state.alert = False
 
 # =========================
 # SIDEBAR
@@ -153,27 +135,10 @@ st.title("🎥 Live Object Detection & Tracing")
 st.caption("AI-powered real-time object detection system with YOLOv8")
 
 # =========================
-# SMART ALERT DISPLAY
-# =========================
-if st.session_state.alert:
-
-    st.markdown("""
-    <div class="alert-box">
-        🚨 SMART ALERT: OBJECT DETECTED!
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <audio autoplay>
-        <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
-    </audio>
-    """, unsafe_allow_html=True)
-
-# =========================
-# DETECTION FUNCTION
+# DETECTION FUNCTION (FIXED)
 # =========================
 def detect(frame):
-
+    
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
 
     results = model.predict(frame, conf=CONF, verbose=False)
@@ -202,11 +167,7 @@ def detect(frame):
             "count": len(unique_detected)
         })
 
-        st.session_state.alert = True
         st.toast(f"🚨 Detected: {', '.join(unique_detected)}")
-
-    else:
-        st.session_state.alert = False
 
     return annotated_frame, detected
 
@@ -237,7 +198,7 @@ if mode == "📡 Live Camera":
         st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
-# UPLOAD IMAGE
+# IMAGE UPLOAD
 # =========================
 elif mode == "🖼 Upload Image":
 
@@ -263,8 +224,9 @@ elif mode == "🖼 Upload Image":
         st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
-# 📊 PIE CHART
+# 📊 ANALYTICS (FIXED & SYNCHED)
 # =========================
+
 st.markdown("### 📊 Object Distribution (Pie Chart)")
 
 if st.session_state.detections:
@@ -273,40 +235,39 @@ if st.session_state.detections:
     for d in st.session_state.detections:
         all_objects.extend(d["objects"])
 
-    if all_objects:
+    counter = Counter(all_objects)
 
-        counter = Counter(all_objects)
-
-        fig, ax = plt.subplots(figsize=(3,3))
-        ax.pie(counter.values(), labels=counter.keys(), autopct='%1.1f%%')
-        st.pyplot(fig)
+    fig, ax = plt.subplots(figsize=(3, 3))
+    ax.pie(counter.values(), labels=counter.keys(), autopct='%1.1f%%')
+    st.pyplot(fig)
 
 # =========================
 # 🔥 HEATMAP
 # =========================
+
 st.markdown("### 🔥 Detection Heatmap")
 
 if st.session_state.detections:
 
-    all_objects = []
+    heat_objects = []
     for d in st.session_state.detections:
-        all_objects.extend(d["objects"])
+        heat_objects.extend(d["objects"])
 
-    if all_objects:
+    heat_data = Counter(heat_objects)
 
-        heat = Counter(all_objects)
+    fig, ax = plt.subplots(figsize=(3, 2))
+    ax.imshow([list(heat_data.values())], cmap="Reds", aspect="auto")
 
-        fig, ax = plt.subplots(figsize=(3,2))
-        ax.imshow([list(heat.values())], cmap="Reds", aspect="auto")
-        ax.set_yticks([])
-        ax.set_xticks(range(len(heat)))
-        ax.set_xticklabels(list(heat.keys()), rotation=45)
+    ax.set_yticks([])
+    ax.set_xticks(range(len(heat_data)))
+    ax.set_xticklabels(list(heat_data.keys()), rotation=45)
 
-        st.pyplot(fig)
+    st.pyplot(fig)
 
 # =========================
 # ⏱ TIMELINE
 # =========================
+
 st.markdown("### ⏱ Detection Timeline")
 
 if st.session_state.timeline:

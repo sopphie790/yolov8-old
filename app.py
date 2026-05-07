@@ -545,11 +545,14 @@ if mode == "📷 Live Camera":
 # IMAGE UPLOAD
 # =========================
 elif mode == "🖼 Upload Image":
+    
     st.subheader("🖼 Upload Detection")
+
     file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
     if file is not None:
-        # 🔥 FIX: I-clear ang analytics para hindi sumama ang mga lumang "person" detections
+
+        # 🔥 RESET ANALYTICS (IMPORTANT FIX)
         st.session_state.detections = []
         st.session_state.timeline = []
         st.session_state.unique_ids = set()
@@ -557,16 +560,24 @@ elif mode == "🖼 Upload Image":
         img = Image.open(file).convert("RGB")
         frame = np.array(img)
 
-        # Gamitin ang record_analytics=True para sa fresh data lang ng image na ito
-        result, detected = detect(frame, record_analytics=True, min_conf=0.5, resize=False)
+        # 🔥 RUN DETECTION (NO RESIZE FOR ACCURACY)
+        result, detected = detect(
+            frame,
+            record_analytics=True,
+            min_conf=0.5,
+            resize=False
+        )
 
         col1, col2 = st.columns(2)
+
         with col1:
             st.image(frame, caption="Original Image")
+
         with col2:
             st.image(result, caption="AI Detection")
 
-        if detected:
+        # 🔥 SAFE DISPLAY
+        if detected and len(detected) > 0:
             st.success(f"Detected Objects: {', '.join(set(detected))}")
         else:
             st.warning("No objects detected")

@@ -244,7 +244,6 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # 👇 DITO ILALAGAY
     st.markdown("")
 
     if "mode" not in st.session_state:
@@ -260,6 +259,12 @@ with st.sidebar:
         }.get(st.session_state.mode, 0),
         key="mode_select",
     )
+    st.markdown("---")
+    if st.button("🧹 Clear All Analytics"):
+        st.session_state.detections = []
+        st.session_state.timeline = []
+        st.session_state.unique_ids = set()
+        st.rerun()
 
     st.session_state.mode = mode
 
@@ -540,23 +545,24 @@ if mode == "📷 Live Camera":
 # IMAGE UPLOAD
 # =========================
 elif mode == "🖼 Upload Image":
-
     st.subheader("🖼 Upload Detection")
-
     file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
     if file is not None:
+        # 🔥 FIX: I-clear ang analytics para hindi sumama ang mga lumang "person" detections
+        st.session_state.detections = []
+        st.session_state.timeline = []
+        st.session_state.unique_ids = set()
 
         img = Image.open(file).convert("RGB")
         frame = np.array(img)
 
+        # Gamitin ang record_analytics=True para sa fresh data lang ng image na ito
         result, detected = detect(frame, record_analytics=True, min_conf=0.5, resize=False)
 
         col1, col2 = st.columns(2)
-
         with col1:
             st.image(frame, caption="Original Image")
-
         with col2:
             st.image(result, caption="AI Detection")
 

@@ -83,6 +83,49 @@ h1, h2, h3 {
 
 </style>
 """, unsafe_allow_html=True)
+<style>
+
+/* =========================
+PROFESSIONAL SIDEBAR BUTTON STYLE
+========================= */
+
+/* RADIO BUTTON CONTAINER */
+div[data-baseweb="radio"] > div {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(10px);
+    transition: 0.3s ease-in-out;
+}
+
+/* HOVER EFFECT */
+div[data-baseweb="radio"] > div:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* SELECTED BUTTON */
+div[role="radiogroup"] label[data-selected="true"] {
+    background: rgba(255, 255, 255, 0.35) !important;
+    border-radius: 16px;
+}
+
+/* TEXT STYLE (TRANSPARENT MODERN LOOK) */
+div[data-baseweb="radio"] span {
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* ACTIVE TEXT (SELECTED) */
+div[role="radiogroup"] label[data-selected="true"] span {
+    color: rgba(255, 255, 255, 1) !important;
+    font-weight: 700;
+}
+
+</style>
 
 # =========================
 # LOAD MODEL

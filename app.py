@@ -266,22 +266,51 @@ with st.sidebar:
         """
         <style>
         /* SELECTBOX */
-        [data-testid="stSidebar"] .stSelectbox div {
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 12px;
-            border: 1.5px solid rgba(255, 93, 171, 0.2);
+        [data-testid="stSidebar"] .stSelectbox > div {
+            background-color: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 14px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
         }
-        
-        [data-testid="stSidebar"] .stSelectbox div:hover {
-            background-color: rgba(255, 255, 255, 0.85);
-            border-color: rgba(255, 93, 171, 0.4);
-            box-shadow: 0 8px 20px rgba(255, 93, 171, 0.12);
+
+        [data-testid="stSidebar"] .stSelectbox > div:hover {
+            border-color: rgba(255, 93, 171, 0.35);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
         }
 
-        /* SELECT DROPDOWN */
+        [data-testid="stSidebar"] .stSelectbox button {
+            color: #111;
+            font-weight: 600;
+            letter-spacing: 0.25px;
+            text-align: left;
+            padding: 0.95rem 1rem;
+            position: relative;
+        }
+
+        [data-testid="stSidebar"] .stSelectbox button::after {
+            content: "▾";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 0, 0, 0.45);
+            font-size: 0.85rem;
+        }
+
         [data-testid="stSidebar"] [data-baseweb="select"] {
-            border-radius: 12px !important;
+            border-radius: 14px !important;
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="select"] [role="option"] {
+            border-radius: 10px;
+            transition: background-color 0.2s ease;
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="select"] [role="option"][aria-selected="true"],
+        [data-testid="stSidebar"] [data-baseweb="select"] [role="option"]:hover {
+            background-color: rgba(240, 240, 240, 0.9);
+            color: #111;
         }
 
         /* INFO BOX */

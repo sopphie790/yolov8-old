@@ -2,8 +2,8 @@
 # pip install streamlit-webrtc av ultralytics opencv-python pillow numpy
 
 import streamlit as st
-from ultralytics import YOLO
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+from streamlit_webrtc import webrtc_streamer
+from streamlit_webrtc import VideoTransformerBase
 import av
 import cv2
 import numpy as np

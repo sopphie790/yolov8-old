@@ -1,6 +1,6 @@
-streamlit
+streamlit==1.36.0
 streamlit-webrtc==0.47.1
-opencv-python
+opencv-python-headless
 numpy
 pillow
 ultralytics

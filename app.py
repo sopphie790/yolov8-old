@@ -202,6 +202,14 @@ def load_model():
 model = load_model()
 
 # =========================
+# DEFAULT DETECTION SETTINGS
+# =========================
+CONF = 0.5
+IOU = 0.5
+MAX_DET = 300
+ENABLE_TRACKING = True
+
+# =========================
 # ANALYTICS STORAGE
 # =========================
 if "detections" not in st.session_state:
@@ -250,13 +258,13 @@ with st.sidebar:
 
     mode = st.session_state.mode
 
-    CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
+    st.session_state.CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
     # 🔥 ADVANCED SETTINGS
-    IOU = st.slider("📦 IOU Threshold", 0.1, 1.0, 0.5)
+    st.session_state.IOU = st.slider("📦 IOU Threshold", 0.1, 1.0, 0.5)
 
-    MAX_DET = st.slider("🔍 Max Detection", 10, 500, 300)
+    st.session_state.MAX_DET = st.slider("🔍 Max Detection", 10, 500, 300)
 
-    ENABLE_TRACKING = st.toggle(
+    st.session_state.ENABLE_TRACKING = st.toggle(
     "🛰 Enable Tracking",
     value=True
     )
@@ -287,13 +295,13 @@ def detect(frame, record_analytics=False):
     # =========================
     # 🔥 ADVANCED TRACKING
     # =========================
-    if ENABLE_TRACKING:
+    if st.session_state.ENABLE_TRACKING:
         
         results = model.predict(
             source=frame_bgr,
-            conf=CONF,
-            iou=IOU,
-            max_det=MAX_DET,
+            conf=st.session_state.CONF,
+            iou=st.session_state.IOU,
+            max_det=st.session_state.MAX_DET,
             verbose=False
         )
 
@@ -301,9 +309,9 @@ def detect(frame, record_analytics=False):
 
         results = model.predict(
             source=frame_bgr,
-            conf=CONF,
-            iou=IOU,
-            max_det=MAX_DET,
+            conf=st.session_state.CONF,
+            iou=st.session_state.IOU,
+            max_det=st.session_state.MAX_DET,
             verbose=False
         )
 

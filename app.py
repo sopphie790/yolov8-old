@@ -597,7 +597,7 @@ if st.session_state.detections:
 
     counter = Counter(all_objects)
 
-    fig, ax = plt.subplots(figsize=(1.5, 1.5))
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
 
     ax.pie(
         counter.values(),
@@ -623,7 +623,7 @@ if st.session_state.detections:
 
     heat_data = Counter(heat_objects)
 
-    fig, ax = plt.subplots(figsize=(1.5, 1.5))
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
 
     ax.imshow(
         [list(heat_data.values())],
@@ -652,7 +652,7 @@ if st.session_state.timeline:
 
     df = pd.DataFrame(st.session_state.timeline)
 
-    fig, ax = plt.subplots(figsize=(1.5, 1.5))
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
 
     ax.plot(df["frame"], df["count"], marker="o", linestyle="-")
 

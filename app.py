@@ -287,7 +287,7 @@ def detect(frame):
     # =========================
     # 🔥 ADVANCED TRACKING
     # =========================
-if ENABLE_TRACKING:
+    if ENABLE_TRACKING:
     
     results = model.predict(
         source=frame_bgr,

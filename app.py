@@ -160,6 +160,18 @@ with st.sidebar:
 # =========================
 st.title("🎥 Live Object Detection & Tracing")
 st.caption("AI-powered real-time object detection system with YOLOv8")
+# =========================
+# FRAME PREPROCESSING
+# =========================
+def prepare_frame(image):
+
+    img = Image.open(image).convert("RGB")
+    frame = np.array(img)
+
+    # FORCE CLEAN FORMAT (RGB → BGR)
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+    return frame
 
 # =========================
 # DETECTION FUNCTION

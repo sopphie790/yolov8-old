@@ -1,3 +1,5 @@
+from pyexpat import model
+
 import streamlit as st
 from ultralytics import YOLO
 import cv2
@@ -286,25 +288,25 @@ def detect(frame):
     # 🔥 ADVANCED TRACKING
     # =========================
     if ENABLE_TRACKING:
+    
+    results = model.track(
+        source=frame_bgr,
+        persist=True,
+        conf=CONF,
+        iou=IOU,
+        max_det=MAX_DET,
+        verbose=False
+    )
 
-        results = model.track(
-            frame_bgr,
-            persist=True,
-            conf=CONF,
-            iou=IOU,
-            max_det=MAX_DET,
-            verbose=False
-        )
+else:
 
-    else:
-
-        results = model.predict(
-            frame_bgr,
-            conf=CONF,
-            iou=IOU,
-            max_det=MAX_DET,
-            verbose=False
-        )
+    results = model.predict(
+        source=frame_bgr,
+        conf=CONF,
+        iou=IOU,
+        max_det=MAX_DET,
+        verbose=False
+    )
 
     # ✔ YOLO OUTPUT
     annotated_frame = results[0].plot()

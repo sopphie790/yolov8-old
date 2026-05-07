@@ -159,7 +159,7 @@ with st.sidebar:
 # TITLE
 # =========================
 st.title("🎥 Live Object Detection & Tracing")
-st.caption("AI-powered real-time object detection system with YOLOv8")
+st.caption("Point your camera at objects to identify them in real-time")
 # =========================
 # FRAME PREPROCESSING
 # =========================

@@ -271,7 +271,7 @@ metric1, metric2, metric3 = st.columns(3)
 # =========================
 # DETECTION FUNCTION (FIXED)
 # =========================
-def detect(frame):
+def detect(frame, record_analytics=False):
     
     start_time = time.time()
 
@@ -358,7 +358,7 @@ def detect(frame):
     # =========================
     # EXISTING ANALYTICS
     # =========================
-    if len(detected) > 0:
+    if record_analytics and len(detected) > 0:
 
         unique_detected = list(set(detected))
 
@@ -409,7 +409,7 @@ if mode == "📡 Live Camera":
         image = Image.open(camera).convert("RGB")
         frame = np.array(image)
 
-        result, detected = detect(frame)
+        result, detected = detect(frame, record_analytics=False)
 
         col1, col2 = st.columns(2)
 
@@ -435,7 +435,7 @@ elif mode == "🖼 Upload Image":
         img = Image.open(file).convert("RGB")
         frame = np.array(img)
 
-        result, detected = detect(frame)
+        result, detected = detect(frame, record_analytics=True)
 
         col1, col2 = st.columns(2)
 

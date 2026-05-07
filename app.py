@@ -234,15 +234,15 @@ def detect(frame):
         for c in boxes.cls:
             detected.append(model.names[int(c)])
 
+
     if len(detected) > 0:
 
         unique_detected = list(set(detected))
 
-        st.session_state.detections.append({
-            "frame": len(st.session_state.detections),
-            "objects": unique_detected
-        })
-
+        st.session_state.detections = [{
+        "frame": len(st.session_state.detections),
+        "objects": unique_detected
+        }]
         st.session_state.timeline.append({
         "frame": len(st.session_state.timeline),
         "objects": unique_detected,
@@ -311,15 +311,34 @@ elif mode == "🖼 Upload Image":
 
 st.markdown("### 📊 Object Distribution (Pie Chart)")
 
+# =========================
+# 📊 OBJECT DISTRIBUTION
+# =========================
+
+st.markdown("### 📊 Object Distribution (Pie Chart)")
+
 if st.session_state.detections:
 
-    all_objects = st.session_state.detections
+    all_objects = []
+
+    for item in st.session_state.detections:
+        all_objects.extend(item["objects"])
 
     counter = Counter(all_objects)
 
     fig, ax = plt.subplots(figsize=(3, 3))
-    ax.pie(counter.values(), labels=counter.keys(), autopct='%1.1f%%')
+
+    ax.pie(
+        counter.values(),
+        labels=counter.keys(),
+        autopct='%1.1f%%'
+    )
+
     st.pyplot(fig)
+
+# =========================
+# 🔥 HEATMAP
+# =========================
 
 # =========================
 # 🔥 HEATMAP
@@ -329,16 +348,29 @@ st.markdown("### 🔥 Detection Heatmap")
 
 if st.session_state.detections:
 
-    heat_objects = st.session_state.detections
+    heat_objects = []
+
+    for item in st.session_state.detections:
+        heat_objects.extend(item["objects"])
 
     heat_data = Counter(heat_objects)
 
     fig, ax = plt.subplots(figsize=(3, 2))
-    ax.imshow([list(heat_data.values())], cmap="Reds", aspect="auto")
+
+    ax.imshow(
+        [list(heat_data.values())],
+        cmap="Reds",
+        aspect="auto"
+    )
 
     ax.set_yticks([])
+
     ax.set_xticks(range(len(heat_data)))
-    ax.set_xticklabels(list(heat_data.keys()), rotation=45)
+
+    ax.set_xticklabels(
+        list(heat_data.keys()),
+        rotation=45
+    )
 
     st.pyplot(fig)
 

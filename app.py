@@ -278,9 +278,10 @@ with st.sidebar:
         }
 
         [data-testid="stSidebar"] div[data-baseweb="select"] span,
-        [data-testid="stSidebar"] div[data-baseweb="select"] select {
+        [data-testid="stSidebar"] div[data-baseweb="select"] select,
+        [data-testid="stSidebar"] .selected-value-text {
             font-size: 15px;
-            color: #333333 !important;
+            color: #2D3748 !important;
             font-weight: 600;
         }
 

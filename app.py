@@ -265,8 +265,53 @@ with st.sidebar:
     st.markdown(
         """
         <style>
+        /* SELECTBOX */
+        [data-testid="stSidebar"] .stSelectbox div {
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            border: 1.5px solid rgba(255, 93, 171, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        [data-testid="stSidebar"] .stSelectbox div:hover {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-color: rgba(255, 93, 171, 0.4);
+            box-shadow: 0 8px 20px rgba(255, 93, 171, 0.12);
+        }
+
+        /* SELECT DROPDOWN */
         [data-testid="stSidebar"] [data-baseweb="select"] {
             border-radius: 12px !important;
+        }
+
+        /* INFO BOX */
+        [data-testid="stSidebar"] .stAlert {
+            background-color: rgba(255, 219, 232, 0.4);
+            color: #333;
+            border-radius: 12px;
+            border-left: 4px solid #ff5dab;
+        }
+
+        /* SIDEBAR BUTTONS */
+        [data-testid="stSidebar"] .stButton > button {
+            background: linear-gradient(135deg, #ff5dab, #ff3366);
+            color: rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            border: 1.5px solid #ff1961;
+            padding: 12px 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        [data-testid="stSidebar"] .stButton > button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(255, 50, 110, 0.28);
+            border-color: #ff0052;
+        }
+
+        [data-testid="stSidebar"] .stButton > button:active {
+            transform: translateY(-1px);
         }
         </style>
         """,

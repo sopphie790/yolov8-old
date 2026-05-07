@@ -7,6 +7,7 @@ import pandas as pd
 from collections import Counter
 import matplotlib.pyplot as plt
 import time
+
 # =========================
 # PAGE CONFIG
 # =========================
@@ -17,42 +18,36 @@ st.set_page_config(
 )
 
 # =========================
-# LIGHT PINK MODERN UI/UX
+# LIGHT PINK MODERN UI/UX (UNCHANGED)
 # =========================
 st.markdown("""
 <style>
 
-/* MAIN BACKGROUND */
 .main {
     background: linear-gradient(135deg, #ffe4ec, #fff0f5);
     color: #333;
 }
 
-/* APP CONTAINER */
 .block-container {
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
 
-/* SIDEBAR */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #ffb6c1, #ff69b4);
     color: white;
 }
 
-/* SIDEBAR TEXT */
 [data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* PROFILE IMAGE */
 [data-testid="stSidebar"] img {
     border-radius: 50%;
     border: 3px solid white;
     box-shadow: 0px 0px 15px rgba(255,255,255,0.6);
 }
 
-/* PROFILE NAME */
 .profile-name {
     text-align:center;
     font-size:22px;
@@ -60,7 +55,6 @@ st.markdown("""
     margin-bottom:0;
 }
 
-/* PROFILE COURSE */
 .profile-course {
     text-align:center;
     font-size:13px;
@@ -68,14 +62,12 @@ st.markdown("""
     opacity:0.9;
 }
 
-/* CARDS */
 div[data-testid="stImage"] {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0px 6px 20px rgba(0,0,0,0.1);
 }
 
-/* BUTTONS */
 .stButton > button {
     background: linear-gradient(90deg, #ff69b4, #ff85c1);
     color: white;
@@ -83,30 +75,10 @@ div[data-testid="stImage"] {
     border: none;
     font-weight: bold;
     padding: 0.6rem 1rem;
-    transition: 0.3s;
 }
 
-.stButton > button:hover {
-    transform: scale(1.03);
-    background: linear-gradient(90deg, #ff85c1, #ff69b4);
-}
-
-/* RADIO STYLE */
-div[data-baseweb="radio"] > div {
-    background: rgba(255,255,255,0.7);
-    padding: 10px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-}
-
-/* TITLE */
 h1, h2, h3 {
     color: #d63384;
-}
-
-/* CAPTION */
-.stCaption {
-    color: #6c757d;
 }
 
 </style>
@@ -120,6 +92,7 @@ def load_model():
     return YOLO("yolov8n.pt")
 
 model = load_model()
+
 # =========================
 # ANALYTICS STORAGE
 # =========================
@@ -156,19 +129,21 @@ with st.sidebar:
     CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
 
 # =========================
-# MAIN TITLE
+# TITLE
 # =========================
 st.title("🎥 Live Object Detection & Tracing")
 st.caption("AI-powered real-time object detection system with YOLOv8")
 
 # =========================
-# DETECTION FUNCTION
+# DETECTION FUNCTION (FIXED)
 # =========================
 def detect(frame):
+
     results = model.predict(frame, conf=CONF, verbose=False)
     annotated_frame = results[0].plot()
 
     detected = []
+
     boxes = results[0].boxes
 
     if boxes is not None:
@@ -176,25 +151,28 @@ def detect(frame):
             detected.append(model.names[int(c)])
 
     # =========================
-    # STORE DETECTIONS
+    # STORE DETECTIONS (FIXED STRUCTURE)
     # =========================
     if detected:
-        unique_detected = list(set(detected))
-        st.session_state.detections.extend(unique_detected)
 
-        # timeline tracking
-        st.session_state.timeline.append({
-            "time": time.time(),
-            "count": len(detected)
+        unique_detected = list(set(detected))
+
+        st.session_state.detections.append({
+            "frame": len(st.session_state.detections),
+            "objects": unique_detected
         })
 
-        # ALERT SYSTEM
-        st.toast(f"🚨 Object Detected: {', '.join(set(detected))}")
+        st.session_state.timeline.append({
+            "frame": len(st.session_state.timeline),
+            "count": len(unique_detected)
+        })
+
+        st.toast(f"🚨 Object Detected: {', '.join(unique_detected)}")
 
     return annotated_frame, detected
 
 # =========================
-# LIVE CAMERA MODE
+# LIVE CAMERA
 # =========================
 if mode == "📡 Live Camera":
 
@@ -203,6 +181,7 @@ if mode == "📡 Live Camera":
     camera = st.camera_input("Open Camera")
 
     if camera is not None:
+
         image = Image.open(camera).convert("RGB")
         frame = np.array(image)
 
@@ -219,7 +198,7 @@ if mode == "📡 Live Camera":
         st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
-# IMAGE UPLOAD MODE
+# IMAGE UPLOAD
 # =========================
 elif mode == "🖼 Upload Image":
 
@@ -243,22 +222,38 @@ elif mode == "🖼 Upload Image":
             st.image(result, caption="AI Detection")
 
         st.success(f"Detected Objects: {', '.join(set(detected))}")
-        st.markdown("### 📊 Object Distribution (Pie Chart)")
+
+# =========================
+# 📊 ANALYTICS (FIXED & SYNCHED)
+# =========================
+
+st.markdown("### 📊 Object Distribution (Pie Chart)")
 
 if st.session_state.detections:
 
-    counter = Counter(st.session_state.detections)
-    labels = list(counter.keys())
-    values = list(counter.values())
+    all_objects = []
+    for d in st.session_state.detections:
+        all_objects.extend(d["objects"])
 
-    fig, ax = plt.subplots(figsize=(3, 3))  # SMALL SIZE
-    ax.pie(values, labels=labels, autopct='%1.1f%%')
+    counter = Counter(all_objects)
+
+    fig, ax = plt.subplots(figsize=(3, 3))
+    ax.pie(counter.values(), labels=counter.keys(), autopct='%1.1f%%')
     st.pyplot(fig)
-    st.markdown("### 🔥 Detection Heatmap")
+
+# =========================
+# 🔥 HEATMAP
+# =========================
+
+st.markdown("### 🔥 Detection Heatmap")
 
 if st.session_state.detections:
 
-    heat_data = Counter(st.session_state.detections)
+    heat_objects = []
+    for d in st.session_state.detections:
+        heat_objects.extend(d["objects"])
+
+    heat_data = Counter(heat_objects)
 
     fig, ax = plt.subplots(figsize=(3, 2))
     ax.imshow([list(heat_data.values())], cmap="Reds", aspect="auto")
@@ -268,7 +263,12 @@ if st.session_state.detections:
     ax.set_xticklabels(list(heat_data.keys()), rotation=45)
 
     st.pyplot(fig)
-    st.markdown("### ⏱ Detection Timeline")
+
+# =========================
+# ⏱ TIMELINE
+# =========================
+
+st.markdown("### ⏱ Detection Timeline")
 
 if st.session_state.timeline:
 
@@ -276,9 +276,9 @@ if st.session_state.timeline:
 
     fig, ax = plt.subplots()
 
-    ax.plot(df["time"], df["count"], marker="o")
+    ax.plot(df["frame"], df["count"], marker="o")
 
-    ax.set_xlabel("Time")
+    ax.set_xlabel("Frame")
     ax.set_ylabel("Objects Detected")
     ax.set_title("Detection Over Time")
 

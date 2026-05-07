@@ -248,12 +248,16 @@ with st.sidebar:
     st.markdown("### 📌 Select Mode")
 
     if "mode" not in st.session_state:
-        st.session_state.mode = "� Live Camera"
+        st.session_state.mode = "Choose a mode..."
 
     mode = st.selectbox(
         "Select Mode",
-        ["📷 Live Camera", "🖼 Upload Image"],
-        index=0 if st.session_state.mode == "📷 Live Camera" else 1,
+        ["Choose a mode...", "📷 Live Camera", "🖼 Upload Image"],
+        index={
+            "Choose a mode...": 0,
+            "Live Camera": 1,
+            "Upload Image": 2,
+        }.get(st.session_state.mode, 0),
         key="mode_select",
     )
 
@@ -270,6 +274,7 @@ with st.sidebar:
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             padding: 6px 10px;
+            color: #2D3748 !important;
         }
 
         [data-testid="stSidebar"] div[data-baseweb="select"] > div:hover {
@@ -504,7 +509,7 @@ def detect(frame, record_analytics=False):
 # =========================
 # LIVE CAMERA
 # =========================
-if mode == "📡 Live Camera":
+if mode == "� Live Camera":
 
     st.subheader("📸 Camera Detection")
 

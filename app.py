@@ -195,9 +195,9 @@ div[data-testid="stSidebar"] button[kind="primary"] span {
 # =========================
 @st.cache_resource
 def load_model():
-    return YOLO("yolov8n.pt")
 
-model = load_model()
+    # 🔥 BETTER ACCURACY
+    return YOLO("yolov8m.pt")
 
 # =========================
 # ANALYTICS STORAGE
@@ -207,6 +207,13 @@ if "detections" not in st.session_state:
 
 if "timeline" not in st.session_state:
     st.session_state.timeline = []
+
+# 🔥 ADVANCED ANALYTICS
+if "unique_ids" not in st.session_state:
+    st.session_state.unique_ids = set()
+
+if "fps" not in st.session_state:
+    st.session_state.fps = 0
 
 # =========================
 # SIDEBAR
@@ -242,56 +249,148 @@ with st.sidebar:
     mode = st.session_state.mode
 
     CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
+    # 🔥 ADVANCED SETTINGS
+    IOU = st.slider("📦 IOU Threshold", 0.1, 1.0, 0.5)
+
+    MAX_DET = st.slider("🔍 Max Detection", 10, 500, 300)
+
+    ENABLE_TRACKING = st.toggle(
+    "🛰 Enable Tracking",
+    value=True
+    )
 # =========================
 # TITLE
 # =========================
 st.title("🎥 Live Object Detection & Tracing")
 st.caption("Point your camera at objects to identify them in real-time")
+# 🔥 LIVE ANALYTICS
+metric1, metric2, metric3 = st.columns(3)
 
 # =========================
 # DETECTION FUNCTION (FIXED)
 # =========================
 def detect(frame):
     
+    start_time = time.time()
+
     # ✔ KEEP ORIGINAL CLEAN RGB
     frame_rgb = np.array(frame)
+
+    # 🔥 BETTER SMALL OBJECT DETECTION
+    frame_rgb = cv2.resize(frame_rgb, (1280, 720))
 
     # ✔ CONVERT ONLY FOR YOLO INPUT
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
 
-    results = model.predict(frame_bgr, conf=CONF, verbose=False)
+    # =========================
+    # 🔥 ADVANCED TRACKING
+    # =========================
+    if ENABLE_TRACKING:
 
-    # ✔ YOLO OUTPUT (BGR)
+        results = model.track(
+            frame_bgr,
+            persist=True,
+            conf=CONF,
+            iou=IOU,
+            max_det=MAX_DET,
+            verbose=False
+        )
+
+    else:
+
+        results = model.predict(
+            frame_bgr,
+            conf=CONF,
+            iou=IOU,
+            max_det=MAX_DET,
+            verbose=False
+        )
+
+    # ✔ YOLO OUTPUT
     annotated_frame = results[0].plot()
 
-    # 🔥 FIX COLOR BACK TO RGB (IMPORTANT)
-    annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
+    # 🔥 FIX COLOR BACK TO RGB
+    annotated_frame = cv2.cvtColor(
+        annotated_frame,
+        cv2.COLOR_BGR2RGB
+    )
 
     detected = []
 
     boxes = results[0].boxes
 
+    # =========================
+    # 🔥 SMART FILTERING
+    # =========================
     if boxes is not None and len(boxes) > 0:
-        for c in boxes.cls:
-            detected.append(model.names[int(c)])
 
+        for box in boxes:
 
+            conf = float(box.conf[0])
+
+            # 🔥 REMOVE FAKE DETECTIONS
+            if conf < 0.35:
+                continue
+
+            cls = int(box.cls[0])
+
+            class_name = model.names[cls]
+
+            detected.append(class_name)
+
+            # 🔥 TRACKING IDS
+            if ENABLE_TRACKING and box.id is not None:
+
+                track_id = int(box.id[0])
+
+                st.session_state.unique_ids.add(track_id)
+
+    # =========================
+    # 🔥 FPS ANALYTICS
+    # =========================
+    end_time = time.time()
+
+    fps = 1 / (end_time - start_time)
+
+    st.session_state.fps = round(fps, 2)
+
+    # =========================
+    # EXISTING ANALYTICS
+    # =========================
     if len(detected) > 0:
 
         unique_detected = list(set(detected))
 
         st.session_state.detections.append({
-        "frame": len(st.session_state.detections),
-        "objects": unique_detected
+            "frame": len(st.session_state.detections),
+            "objects": unique_detected
         })
 
         st.session_state.timeline.append({
-        "frame": len(st.session_state.timeline),
-        "objects": unique_detected,
-        "count": len(unique_detected)
+            "frame": len(st.session_state.timeline),
+            "objects": unique_detected,
+            "count": len(unique_detected)
         })
 
         st.toast(f"🚨 Detected: {', '.join(unique_detected)}")
+
+    # =========================
+    # 🔥 LIVE METRICS
+    # =========================
+    metric1.metric(
+        "⚡ FPS",
+        st.session_state.fps
+    )
+
+    metric2.metric(
+        "🎯 Objects",
+        len(detected)
+    )
+
+    metric3.metric(
+        "🛰 Tracking IDs",
+        len(st.session_state.unique_ids)
+    )
 
     return annotated_frame, detected
 
@@ -358,8 +457,7 @@ if st.session_state.detections:
     all_objects = []
 
     for item in st.session_state.detections:
-        if "objects" in item:
-             all_objects.extend(item["objects"])
+        all_objects.extend(item["objects"])
 
     counter = Counter(all_objects)
 

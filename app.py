@@ -247,21 +247,15 @@ with st.sidebar:
     # 👇 DITO ILALAGAY
     st.markdown("### 📌 Select Mode")
 
-    if "mode" not in st.session_state:
-        st.session_state.mode = "Choose a mode..."
+    if 'selected_mode' not in st.session_state:
+        st.session_state['selected_mode'] = "Live Camera"
 
-    mode = st.selectbox(
+    mode = st.sidebar.selectbox(
         "Select Mode",
-        ["Choose a mode...", "📷 Live Camera", "🖼 Upload Image"],
-        index={
-            "Choose a mode...": 0,
-            "Live Camera": 1,
-            "Upload Image": 2,
-        }.get(st.session_state.mode, 0),
-        key="mode_select",
+        options=["Live Camera", "Video File", "Image Upload"],
+        index=0,
+        key="mode_selection"
     )
-
-    st.session_state.mode = mode
 
     st.markdown(
         """
@@ -509,7 +503,7 @@ def detect(frame, record_analytics=False):
 # =========================
 # LIVE CAMERA
 # =========================
-if mode == "� Live Camera":
+if st.session_state.selected_mode == "Live Camera":
 
     st.subheader("📸 Camera Detection")
 
@@ -535,10 +529,15 @@ if mode == "� Live Camera":
         else:
             st.warning("No objects detected")
 
+elif st.session_state.selected_mode == "Video File":
+    
+    st.subheader("🎥 Video File Detection")
+    st.info("Video file detection feature coming soon!")
+
 # =========================
 # IMAGE UPLOAD
 # =========================
-elif mode == "🖼 Upload Image":
+elif st.session_state.selected_mode == "Image Upload":
 
     st.subheader("🖼 Upload Detection")
 

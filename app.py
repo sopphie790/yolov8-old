@@ -427,7 +427,10 @@ if mode == "📡 Live Camera":
         with col2:
             st.image(result, caption="AI Detection")
 
-        st.success(f"Detected Objects: {', '.join(set(detected))}")
+        if detected:
+            st.success(f"Detected Objects: {', '.join(set(detected))}")
+        else:
+            st.warning("No objects detected")
 
 # =========================
 # IMAGE UPLOAD
@@ -453,7 +456,10 @@ elif mode == "🖼 Upload Image":
         with col2:
             st.image(result, caption="AI Detection")
 
-        st.success(f"Detected Objects: {', '.join(set(detected))}")
+        if detected:
+            st.success(f"Detected Objects: {', '.join(set(detected))}")
+        else:
+            st.warning("No objects detected")
 
 # =========================
 # 📊 OBJECT DISTRIBUTION

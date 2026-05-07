@@ -1,5 +1,10 @@
+# INSTALL FIRST:
+# pip install streamlit-webrtc av ultralytics opencv-python pillow numpy
+
 import streamlit as st
 from ultralytics import YOLO
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+import av
 import cv2
 import numpy as np
 from PIL import Image
@@ -19,7 +24,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* MAIN BACKGROUND */
+/* BACKGROUND */
 .main {
     background: radial-gradient(circle at top left, #0f172a, #020617);
     color: white;
@@ -52,7 +57,7 @@ st.markdown("""
     opacity: 0.4;
 }
 
-/* FLOATING ANIMATION */
+/* FLOATING STARS */
 @keyframes stars {
     0% {
         transform: translate(0,0);
@@ -101,12 +106,7 @@ div[data-baseweb="radio"] > div {
     backdrop-filter: blur(8px);
 }
 
-/* SLIDER */
-.stSlider {
-    padding-top: 10px;
-}
-
-/* BUTTON */
+/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 12px;
@@ -116,7 +116,7 @@ div[data-baseweb="radio"] > div {
     font-weight: bold;
 }
 
-/* TITLE */
+/* TITLES */
 h1, h2, h3 {
     color: white;
 }
@@ -125,7 +125,7 @@ h1, h2, h3 {
 """, unsafe_allow_html=True)
 
 # =========================
-# LOAD MODEL
+# LOAD YOLO MODEL
 # =========================
 @st.cache_resource
 def load_model():
@@ -140,7 +140,7 @@ with st.sidebar:
 
     st.title("🚨 DASHBOARD")
 
-    # CENTER IMAGE
+    # PROFILE IMAGE CENTER
     col1, col2, col3 = st.columns([1,2,1])
 
     with col2:
@@ -177,55 +177,39 @@ st.title("🎥 Live Object Detection & Tracing")
 st.caption("Point your camera at objects to identify them in real-time.")
 
 # =========================
-# DETECTION FUNCTION
+# REAL-TIME DETECTION CLASS
 # =========================
-def detect(frame):
+class VideoProcessor(VideoTransformerBase):
 
-    results = model.predict(frame, conf=CONF, verbose=False)
+    def recv(self, frame):
 
-    annotated_frame = results[0].plot()
+        img = frame.to_ndarray(format="bgr24")
 
-    detected = []
+        results = model.predict(img, conf=CONF, verbose=False)
 
-    boxes = results[0].boxes
+        annotated_frame = results[0].plot()
 
-    if boxes is not None:
-
-        for c in boxes.cls:
-
-            name = model.names[int(c)]
-            detected.append(name)
-
-    return annotated_frame, detected
+        return av.VideoFrame.from_ndarray(
+            annotated_frame,
+            format="bgr24"
+        )
 
 # =========================
 # LIVE CAMERA MODE
 # =========================
 if mode == "📡 Live Camera":
 
-    st.subheader("📸 Camera Detection")
+    st.subheader("📸 Real-Time AI Camera")
 
-    camera = st.camera_input(
-        "Open Camera",
-        key="camera_input"
+    webrtc_streamer(
+        key="live-camera",
+        video_processor_factory=VideoProcessor,
+        media_stream_constraints={
+            "video": True,
+            "audio": False
+        },
+        async_processing=True
     )
-
-    if camera is not None:
-
-        image = Image.open(camera).convert("RGB")
-        frame = np.array(image)
-
-        result, detected = detect(frame)
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.image(frame, caption="Original Image")
-
-        with col2:
-            st.image(result, caption="AI Detection")
-
-        st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
 # IMAGE UPLOAD MODE
@@ -245,7 +229,20 @@ elif mode == "🖼 Upload Image":
         img = Image.open(file).convert("RGB")
         frame = np.array(img)
 
-        result, detected = detect(frame)
+        results = model.predict(frame, conf=CONF, verbose=False)
+
+        result = results[0].plot()
+
+        detected = []
+
+        boxes = results[0].boxes
+
+        if boxes is not None:
+
+            for c in boxes.cls:
+
+                name = model.names[int(c)]
+                detected.append(name)
 
         col1, col2 = st.columns(2)
 
@@ -255,4 +252,6 @@ elif mode == "🖼 Upload Image":
         with col2:
             st.image(result, caption="AI Detection")
 
-        st.success(f"Detected Objects: {', '.join(set(detected))}")
+        st.success(
+            f"Detected Objects: {', '.join(set(detected))}"
+        )

@@ -1,150 +1,141 @@
-# 🎥 Live Object Detection & Tracking using YOLOv8
+# 🚨 AI Surveillance System  
+## Real-Time Object Detection and Tracking using YOLOv8 + Streamlit
+
+---
 
 ## 📌 Project Overview
 
-This project is a real-time AI-powered web application built using **Streamlit** and **YOLOv8 (Ultralytics)**. It uses a webcam to detect, track, and label objects in real time with bounding boxes.
+This project is a **real-time AI-powered object detection and tracking system** built using **Streamlit, YOLOv8, OpenCV, and Python**.
 
-The system demonstrates how computer vision and artificial intelligence work in live environments by processing video frames instantly.
+It enables users to:
+- Detect objects in real time using a webcam 📷  
+- Upload images for object detection 🖼  
+- Track objects across frames 🛰  
+- View analytics through interactive dashboards 📊  
 
----
-
-## 🎯 Objectives
-
-* To understand real-time computer vision concepts
-* To apply AI object detection using YOLOv8
-* To build an interactive web application using Streamlit
-* To implement object tracking across video frames
+The system transforms raw AI outputs into meaningful insights using visualization and analytics.
 
 ---
 
-## ⚙️ Technologies Used
+## 🎯 Features
 
-* Python
-* Streamlit
-* YOLOv8 (Ultralytics)
-* OpenCV
-* streamlit-webrtc
-* PyTorch
+### 🔥 Core Features
+- Real-time object detection using YOLOv8
+- Webcam live detection
+- Image upload detection mode
+- Bounding box visualization with labels
 
----
+### 🛰 Tracking System
+- Object tracking across frames
+- Unique object ID counting
+- Detection history storage
 
-## 🚀 Features
+### 📊 Analytics Dashboard
+- Pie chart (object distribution)
+- Heatmap (object frequency)
+- Timeline graph (detection over time)
 
-### 🔍 Real-Time Object Detection
+### ⚡ Performance Monitoring
+- FPS (Frames Per Second) tracking
+- Object count per frame
+- Tracking ID counter
 
-* Detects objects such as:
-
-  * Person
-  * Cell phone
-  * Bottle
-  * Chair
-
-### 📦 Object Tracking
-
-* Tracks objects across frames
-* Maintains identity of moving objects
-
-### 🔢 Object Counting
-
-* Displays number of detected objects on screen
-
-### 🚨 Alert System
-
-* Shows warning when a person is detected
-
-### 💾 Frame Saving
-
-* Automatically saves detected frames as images
+### 🎛 Controls
+- Confidence threshold slider
+- IOU adjustment
+- Max detection limit
+- Tracking toggle
+- Clear analytics button
 
 ---
 
-## ▶️ How to Run the Project
+## 🧠 Technology Stack
 
-### 1. Install Dependencies
+| Component | Technology |
+|-----------|------------|
+| Programming Language | Python |
+| Web Framework | Streamlit |
+| AI Model | YOLOv8 |
+| Computer Vision | OpenCV |
+| Data Processing | NumPy, Pandas |
+| Visualization | Matplotlib |
+| Image Handling | PIL |
 
-```bash
+---
+
+## 📷 System Workflow
+Input (Webcam / Image)
+↓
+Frame Processing (OpenCV)
+↓
+YOLOv8 Object Detection
+↓
+Tracking & Filtering
+↓
+Analytics Storage
+↓
+Visualization Dashboard
+
+
+---
+
+## ⚙️ System Requirements
+
+### 📦 Python Dependencies (`requirements.txt`)
+
+```txt
+streamlit==1.36.0
+streamlit-webrtc==0.47.1
+opencv-python-headless
+numpy
+pillow
+ultralytics
+av
+pandas
+plotly
+
+🖥️ System Dependencies (packages.txt)
+ffmpeg
+pkg-config
+libavcodec-dev
+libavformat-dev
+libavdevice-dev
+libavutil-dev
+libswscale-dev
+libswresample-dev
+
+🚀 Installation & Run
+1️⃣ Clone Repository
+git clone https://github.com/your-username/ai-surveillance-system.git
+cd ai-surveillance-system
+
+2️⃣ Install Requirements
 pip install -r requirements.txt
-```
 
----
+💻 Windows Command Prompt
+Open Command Prompt
+Go to your project folder:
 
-### 2. Run the Application
+git add .
+git commit -m "Final clean version of app.py"
+git push origin main
 
-```bash
-streamlit run app.py
-```
+3️⃣ Run App
+py -m streamlit run app.py
+ 
+localhost
+Local URL: http://localhost:8501
 
----
+📊 Enhancements Implemented
+📊 Analytics Dashboard (Pie, Heatmap, Timeline)
+🛰 Object Tracking System
+⚡ FPS Performance Monitoring
+🎯 Smart Confidence Filtering
+🖼 Dual Input System (Camera + Upload)
+🎨 Professional UI/UX Design
+👨‍🎓 Developer
 
-### 3. Open in Browser
+Name: Liza S. Jaime
+Course: BSCS - 3A
+Institution: DEBESMSCAT
 
-```
-http://localhost:8501
-```
-
----
-
-## 📁 Project Structure
-
-```
-object-detection-app/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-└── screenshots/ (optional)
-```
-
----
-
-## 📊 Observation Report
-
-* Detection works best in good lighting conditions
-* Objects like person and cellphone are easily detected
-* Performance may slow down with low-end devices or poor lighting
-
----
-
-## 🧠 Reflection
-
-### What objects were easily detected?
-
-Common objects such as person, cellphone, and bottle were easily detected by the model.
-
-### What factors affect detection accuracy?
-
-* Lighting conditions
-* Camera quality
-* Distance of object
-* Background noise/clutter
-
----
-
-## 📸 Screenshots
-
-Include at least 5 screenshots showing:
-- Single object detection
-- Multiple objects detection
-- Person alert system
-- Object counting display
-- Tracking movement
-
----
-
-## 🔗 Submission Links
-
-* 🌐 Live App: (add Streamlit link here)
-* 💻 GitHub Repository: https://github.com/sopphie790/yolov8-old.git
-* 📄 Documentation: (add Google Docs link here)
-
----
-
-## 👨‍💻 Developer
-
-LIZA S. JAIME_BSCS-3A
-
----
-
-## 📌 Note
-
-This project is developed for educational purposes to demonstrate real-time AI object detection and tracking using computer vision techniques.

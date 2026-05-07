@@ -153,7 +153,25 @@ def detect(frame):
     # =========================
     # STORE DETECTIONS (FIXED STRUCTURE)
     # =========================
-    if detected:
+   def detect(frame):
+    
+    # FORCE SAFE FORMAT
+    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+
+    results = model.predict(frame, conf=CONF, verbose=False)
+
+    annotated_frame = results[0].plot()
+
+    detected = []
+
+    boxes = results[0].boxes
+
+    if boxes is not None and len(boxes) > 0:
+        for c in boxes.cls:
+            detected.append(model.names[int(c)])
+
+    # STORE ANALYTICS ONLY IF REAL DETECTION EXISTS
+    if len(detected) > 0:
 
         unique_detected = list(set(detected))
 
@@ -167,7 +185,7 @@ def detect(frame):
             "count": len(unique_detected)
         })
 
-        st.toast(f"🚨 Object Detected: {', '.join(unique_detected)}")
+        st.toast(f"🚨 Detected: {', '.join(unique_detected)}")
 
     return annotated_frame, detected
 

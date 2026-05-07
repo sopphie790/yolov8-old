@@ -138,24 +138,7 @@ st.caption("AI-powered real-time object detection system with YOLOv8")
 # DETECTION FUNCTION (FIXED)
 # =========================
 def detect(frame):
-
-    results = model.predict(frame, conf=CONF, verbose=False)
-    annotated_frame = results[0].plot()
-
-    detected = []
-
-    boxes = results[0].boxes
-
-    if boxes is not None:
-        for c in boxes.cls:
-            detected.append(model.names[int(c)])
-
-    # =========================
-    # STORE DETECTIONS (FIXED STRUCTURE)
-    # =========================
-    def detect(frame):
     
-    # FORCE SAFE FORMAT
     frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
 
     results = model.predict(frame, conf=CONF, verbose=False)
@@ -170,7 +153,6 @@ def detect(frame):
         for c in boxes.cls:
             detected.append(model.names[int(c)])
 
-    # STORE ANALYTICS ONLY IF REAL DETECTION EXISTS
     if len(detected) > 0:
 
         unique_detected = list(set(detected))

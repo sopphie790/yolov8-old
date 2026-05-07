@@ -289,12 +289,12 @@ def detect(frame):
     # =========================
     if ENABLE_TRACKING:
     
-    results = model.predict(
-        source=frame_bgr,
-        conf=CONF,
-        iou=IOU,
-        max_det=MAX_DET,
-        verbose=False
+        results = model.predict(
+            source=frame_bgr,
+            conf=CONF,
+            iou=IOU,
+            max_det=MAX_DET,
+            verbose=False
     )
 
 else:

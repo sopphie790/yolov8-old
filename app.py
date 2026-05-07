@@ -244,8 +244,9 @@ def detect(frame):
         })
 
         st.session_state.timeline.append({
-            "frame": len(st.session_state.timeline),
-            "count": len(unique_detected)
+        "frame": len(st.session_state.timeline),
+        "objects": unique_detected,
+        "count": len(unique_detected)
         })
 
         st.toast(f"🚨 Detected: {', '.join(unique_detected)}")
@@ -312,9 +313,7 @@ st.markdown("### 📊 Object Distribution (Pie Chart)")
 
 if st.session_state.detections:
 
-    all_objects = []
-    for d in st.session_state.detections:
-        all_objects.extend(d["objects"])
+    all_objects = st.session_state.detections
 
     counter = Counter(all_objects)
 
@@ -330,9 +329,7 @@ st.markdown("### 🔥 Detection Heatmap")
 
 if st.session_state.detections:
 
-    heat_objects = []
-    for d in st.session_state.detections:
-        heat_objects.extend(d["objects"])
+    heat_objects = st.session_state.detections
 
     heat_data = Counter(heat_objects)
 

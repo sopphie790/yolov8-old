@@ -3,8 +3,6 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 from PIL import Image
-import pandas as pd
-from collections import Counter
 
 # =========================
 # PAGE CONFIG
@@ -16,47 +14,27 @@ st.set_page_config(
 )
 
 # =========================
-# CUSTOM PINK GLITTER UI (UNCHANGED)
+# LIGHT PINK MODERN UI/UX
 # =========================
 st.markdown("""
 <style>
 
 /* MAIN BACKGROUND */
 .main {
-    background: radial-gradient(circle at top left, #0f172a, #020617);
-    color: white;
+    background: linear-gradient(135deg, #ffe4ec, #fff0f5);
+    color: #333;
+}
+
+/* APP CONTAINER */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 /* SIDEBAR */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #ff4da6, #ff1a75);
-    position: relative;
-    overflow: hidden;
-}
-
-/* STAR GLITTER */
-[data-testid="stSidebar"]::before {
-    content: "";
-    position: absolute;
-    width: 300%;
-    height: 300%;
-    top: -100%;
-    left: -100%;
-
-    background-image:
-        radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
-
-    background-size: 18px 18px, 28px 28px;
-
-    animation: stars 12s linear infinite;
-
-    opacity: 0.4;
-}
-
-@keyframes stars {
-    0% { transform: translate(0,0); }
-    100% { transform: translate(150px,-150px); }
+    background: linear-gradient(180deg, #ffb6c1, #ff69b4);
+    color: white;
 }
 
 /* SIDEBAR TEXT */
@@ -67,36 +45,65 @@ st.markdown("""
 /* PROFILE IMAGE */
 [data-testid="stSidebar"] img {
     border-radius: 50%;
-    border: 4px solid white;
-    box-shadow: 0px 0px 20px rgba(255,255,255,0.5);
+    border: 3px solid white;
+    box-shadow: 0px 0px 15px rgba(255,255,255,0.6);
 }
 
-/* PROFILE TEXT */
+/* PROFILE NAME */
 .profile-name {
     text-align:center;
-    color:white;
     font-size:22px;
     font-weight:bold;
+    margin-bottom:0;
 }
 
+/* PROFILE COURSE */
 .profile-course {
     text-align:center;
-    color:#ffd1e8;
-    font-size:14px;
+    font-size:13px;
+    margin-top:0;
+    opacity:0.9;
 }
 
-/* BUTTON */
+/* CARDS */
+div[data-testid="stImage"] {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.1);
+}
+
+/* BUTTONS */
 .stButton > button {
-    width: 100%;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.15);
+    background: linear-gradient(90deg, #ff69b4, #ff85c1);
     color: white;
-    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    border: none;
     font-weight: bold;
+    padding: 0.6rem 1rem;
+    transition: 0.3s;
 }
 
+.stButton > button:hover {
+    transform: scale(1.03);
+    background: linear-gradient(90deg, #ff85c1, #ff69b4);
+}
+
+/* RADIO STYLE */
+div[data-baseweb="radio"] > div {
+    background: rgba(255,255,255,0.7);
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+/* TITLE */
 h1, h2, h3 {
-    color: white;
+    color: #d63384;
+}
+
+/* CAPTION */
+.stCaption {
+    color: #6c757d;
 }
 
 </style>
@@ -112,33 +119,6 @@ def load_model():
 model = load_model()
 
 # =========================
-# SESSION STORAGE (ANALYTICS)
-# =========================
-if "detections" not in st.session_state:
-    st.session_state.detections = []
-
-# =========================
-# DETECTION FUNCTION
-# =========================
-def detect(frame, CONF):
-
-    results = model.predict(frame, conf=CONF, verbose=False)
-    annotated_frame = results[0].plot()
-
-    detected = []
-    boxes = results[0].boxes
-
-    if boxes is not None:
-        for c in boxes.cls:
-            detected.append(model.names[int(c)])
-
-    # SAVE FOR ANALYTICS
-    if detected:
-        st.session_state.detections.extend(detected)
-
-    return annotated_frame, detected
-
-# =========================
 # SIDEBAR
 # =========================
 with st.sidebar:
@@ -146,6 +126,7 @@ with st.sidebar:
     st.title("🚨 DASHBOARD")
 
     col1, col2, col3 = st.columns([1,2,1])
+
     with col2:
         st.image("profile.png", width=130)
 
@@ -158,7 +139,7 @@ with st.sidebar:
 
     mode = st.radio(
         "📌 Select Mode",
-        ["📡 Live Camera", "🖼 Upload Image", "📊 Analytics"]
+        ["📡 Live Camera", "🖼 Upload Image"]
     )
 
     CONF = st.slider("🎯 Confidence", 0.1, 1.0, 0.25)
@@ -167,65 +148,51 @@ with st.sidebar:
 # MAIN TITLE
 # =========================
 st.title("🎥 Live Object Detection & Tracing")
-st.caption("AI-powered YOLOv8 detection system")
+st.caption("AI-powered real-time object detection system with YOLOv8")
 
 # =========================
+# DETECTION FUNCTION
 # =========================
-# ANALYTICS PAGE
-# =========================
-# =========================
-if mode == "📊 Analytics":
+def detect(frame):
+    results = model.predict(frame, conf=CONF, verbose=False)
+    annotated_frame = results[0].plot()
 
-    st.subheader("📊 Detection Analytics Dashboard")
+    detected = []
+    boxes = results[0].boxes
 
-    data = st.session_state.detections
+    if boxes is not None:
+        for c in boxes.cls:
+            detected.append(model.names[int(c)])
 
-    if len(data) == 0:
-        st.info("No detections yet. Start scanning objects.")
-    else:
-
-        counter = Counter(data)
-        df = pd.DataFrame(counter.items(), columns=["Object", "Count"])
-        df = df.sort_values(by="Count", ascending=False)
-
-        col1, col2, col3 = st.columns(3)
-
-        col1.metric("Total Detections", len(data))
-        col2.metric("Unique Objects", len(counter))
-        col3.metric("Top Object", df.iloc[0]["Object"])
-
-        st.bar_chart(df.set_index("Object"))
-        st.dataframe(df, use_container_width=True)
+    return annotated_frame, detected
 
 # =========================
-# LIVE CAMERA
+# LIVE CAMERA MODE
 # =========================
-elif mode == "📡 Live Camera":
+if mode == "📡 Live Camera":
 
     st.subheader("📸 Camera Detection")
 
     camera = st.camera_input("Open Camera")
 
-    if camera:
-
+    if camera is not None:
         image = Image.open(camera).convert("RGB")
         frame = np.array(image)
 
-        result, detected = detect(frame, CONF)
+        result, detected = detect(frame)
 
         col1, col2 = st.columns(2)
 
         with col1:
-            st.image(frame, caption="Original")
+            st.image(frame, caption="Original Image")
 
         with col2:
-            st.image(result, caption="Detected")
+            st.image(result, caption="AI Detection")
 
-        if detected:
-            st.success(f"Detected: {', '.join(set(detected))}")
+        st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
-# IMAGE UPLOAD
+# IMAGE UPLOAD MODE
 # =========================
 elif mode == "🖼 Upload Image":
 
@@ -233,20 +200,19 @@ elif mode == "🖼 Upload Image":
 
     file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
-    if file:
+    if file is not None:
 
         img = Image.open(file).convert("RGB")
         frame = np.array(img)
 
-        result, detected = detect(frame, CONF)
+        result, detected = detect(frame)
 
         col1, col2 = st.columns(2)
 
         with col1:
-            st.image(frame)
+            st.image(frame, caption="Original Image")
 
         with col2:
-            st.image(result)
+            st.image(result, caption="AI Detection")
 
-        if detected:
-            st.success(f"Detected: {', '.join(set(detected))}")
+        st.success(f"Detected Objects: {', '.join(set(detected))}")

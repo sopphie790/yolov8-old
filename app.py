@@ -250,68 +250,16 @@ with st.sidebar:
     if "mode" not in st.session_state:
         st.session_state.mode = "📡 Live Camera"
 
-    query_params = st.experimental_get_query_params()
-    query_mode = query_params.get("mode", [None])[0]
-
-    if query_mode == "live":
-        st.session_state.mode = "📡 Live Camera"
-    elif query_mode == "upload":
-        st.session_state.mode = "🖼 Upload Image"
-
-    current_mode = "live" if st.session_state.mode == "📡 Live Camera" else "upload"
-
-    st.markdown(
-        """
-        <style>
-        .mode-btn {
-            display: block;
-            width: 100%;
-            padding: 12px 0;
-            margin-bottom: 10px;
-            border-radius: 14px;
-            text-align: center;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 15px;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, border 0.15s ease;
-        }
-        .mode-btn:hover {
-            transform: translateY(-1px);
-        }
-        .mode-btn.active {
-            background: linear-gradient(90deg, #ff5dab, #ff3366);
-            color: rgba(0, 0, 0, 0.95);
-            border: 2px solid rgba(255, 25, 97, 0.9);
-            box-shadow: 0 12px 25px rgba(255, 50, 110, 0.18);
-        }
-        .mode-btn.inactive {
-            background: #fafafa;
-            color: rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(221, 221, 221, 0.9);
-        }
-        .mode-btn,
-        .mode-btn.active,
-        .mode-btn.inactive {
-            text-shadow: none;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
+    mode = st.radio(
+        "",
+        ("📡 Live Camera", "🖼 Upload Image"),
+        index=0 if st.session_state.mode == "📡 Live Camera" else 1,
+        key="mode_radio",
+        label_visibility="collapsed",
+        horizontal=False,
     )
 
-    live_class = "active" if current_mode == "live" else "inactive"
-    upload_class = "active" if current_mode == "upload" else "inactive"
-
-    st.markdown(
-        f'<a class="mode-btn {live_class}" href="?mode=live">📡 Live Camera</a>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        f'<a class="mode-btn {upload_class}" href="?mode=upload">🖼 Upload Image</a>',
-        unsafe_allow_html=True,
-    )
-
-    mode = st.session_state.mode
+    st.session_state.mode = mode
 
     st.session_state.CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
     # 🔥 ADVANCED SETTINGS

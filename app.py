@@ -248,15 +248,12 @@ with st.sidebar:
     st.markdown("### 📌 Select Mode")
 
     if "mode" not in st.session_state:
-        st.session_state.mode = "📡 Live Camera"
-
-    mode_options = ["📡 Live Camera", "🖼 Upload Image"]
-    current_index = 0 if st.session_state.mode == "📡 Live Camera" else 1
+        st.session_state.mode = "� Live Camera"
 
     mode = st.selectbox(
         "Select Mode",
-        mode_options,
-        index=current_index,
+        ["📷 Live Camera", "🖼 Upload Image"],
+        index=0 if st.session_state.mode == "📷 Live Camera" else 1,
         key="mode_select",
     )
 

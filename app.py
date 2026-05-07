@@ -516,31 +516,38 @@ def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
 # LIVE CAMERA
 # =========================
 if mode == "📷 Live Camera":
-
     st.subheader("📸 Camera Detection")
-
     camera = st.camera_input("Open Camera")
 
     if camera is not None:
-
         image = Image.open(camera).convert("RGB")
         frame = np.array(image)
+        
+        result, detected = detect(frame, record_analytics=False)
 
-        result, detected = detect(frame, record_analytics=True)
+        import pandas as pd
+        if detected:
+            df_current = pd.DataFrame(detected, columns=['Object']).value_counts().reset_index()
+            df_current.columns = ['Object', 'Count']
+        else:
+            df_current = pd.DataFrame(columns=['Object', 'Count'])
 
         col1, col2 = st.columns(2)
-
         with col1:
             st.image(frame, caption="Original Image")
-
         with col2:
             st.image(result, caption="AI Detection")
 
         if detected:
             st.success(f"Detected Objects: {', '.join(set(detected))}")
+            
+            pie_col, timeline_col = st.columns(2)
+            with pie_col:
+                st.plotly_chart(px.pie(df_current, values='Count', names='Object'))
+            with timeline_col:
+                st.line_chart(df_current.set_index('Object'))
         else:
             st.warning("No objects detected")
-
 # =========================
 # IMAGE UPLOAD
 # =========================

@@ -263,29 +263,32 @@ with st.sidebar:
         """
         <style>
         /* SELECTBOX */
-        [data-testid="stSidebar"] .stSelectbox > div {
+        [data-testid="stSidebar"] div[data-baseweb="select"] > div {
             background-color: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 14px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+            border: 1.5px solid rgba(255, 75, 75, 0.25);
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
+            padding: 6px 10px;
         }
 
-        [data-testid="stSidebar"] .stSelectbox > div:hover {
-            border-color: rgba(255, 93, 171, 0.35);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+        [data-testid="stSidebar"] div[data-baseweb="select"] > div:hover {
+            border-color: rgba(255, 75, 75, 0.4);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
         }
 
-        [data-testid="stSidebar"] .stSelectbox button {
+        [data-testid="stSidebar"] div[data-baseweb="select"] span {
+            font-size: 15px;
             color: #111;
             font-weight: 600;
-            letter-spacing: 0.25px;
-            text-align: left;
-            padding: 0.95rem 1rem;
-            position: relative;
         }
 
-        [data-testid="stSidebar"] .stSelectbox button::after {
+        [data-testid="stSidebar"] div[data-baseweb="select"] button {
+            padding: 0.95rem 1rem;
+            text-align: left;
+        }
+
+        [data-testid="stSidebar"] div[data-baseweb="select"] button::after {
             content: "▾";
             position: absolute;
             right: 1rem;
@@ -295,19 +298,26 @@ with st.sidebar:
             font-size: 0.85rem;
         }
 
-        [data-testid="stSidebar"] [data-baseweb="select"] {
-            border-radius: 14px !important;
+        [data-testid="stSidebar"] div[data-baseweb="select"] [role="listbox"] {
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        [data-testid="stSidebar"] [data-baseweb="select"] [role="option"] {
-            border-radius: 10px;
+        [data-testid="stSidebar"] div[data-baseweb="select"] [role="option"] {
             transition: background-color 0.2s ease;
         }
 
-        [data-testid="stSidebar"] [data-baseweb="select"] [role="option"][aria-selected="true"],
-        [data-testid="stSidebar"] [data-baseweb="select"] [role="option"]:hover {
-            background-color: rgba(240, 240, 240, 0.9);
-            color: #111;
+        [data-testid="stSidebar"] div[data-baseweb="select"] [role="option"]:hover {
+            background-color: #f1f1f1;
+        }
+
+        [data-testid="stSidebar"] div[data-baseweb="select"] [role="option"][aria-selected="true"] {
+            background-color: #e9e9e9;
+            font-weight: 600;
+        }
+
+        [data-testid="stSidebar"] div[data-baseweb="select"] svg {
+            fill: #333;
         }
 
         /* INFO BOX */

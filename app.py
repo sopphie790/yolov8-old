@@ -3,7 +3,10 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 from PIL import Image
-
+import pandas as pd
+from collections import Counter
+import matplotlib.pyplot as plt
+import time
 # =========================
 # PAGE CONFIG
 # =========================
@@ -117,6 +120,14 @@ def load_model():
     return YOLO("yolov8n.pt")
 
 model = load_model()
+# =========================
+# ANALYTICS STORAGE
+# =========================
+if "detections" not in st.session_state:
+    st.session_state.detections = []
+
+if "timeline" not in st.session_state:
+    st.session_state.timeline = []
 
 # =========================
 # SIDEBAR
@@ -163,6 +174,21 @@ def detect(frame):
     if boxes is not None:
         for c in boxes.cls:
             detected.append(model.names[int(c)])
+
+    # =========================
+    # STORE DETECTIONS
+    # =========================
+    if detected:
+        st.session_state.detections.extend(detected)
+
+        # timeline tracking
+        st.session_state.timeline.append({
+            "time": time.time(),
+            "count": len(detected)
+        })
+
+        # ALERT SYSTEM
+        st.toast(f"🚨 Object Detected: {', '.join(set(detected))}")
 
     return annotated_frame, detected
 
@@ -216,3 +242,43 @@ elif mode == "🖼 Upload Image":
             st.image(result, caption="AI Detection")
 
         st.success(f"Detected Objects: {', '.join(set(detected))}")
+        st.markdown("### 📊 Object Distribution (Pie Chart)")
+
+if st.session_state.detections:
+
+    counter = Counter(st.session_state.detections)
+    labels = list(counter.keys())
+    values = list(counter.values())
+
+    fig, ax = plt.subplots(figsize=(3, 3))  # SMALL SIZE
+    ax.pie(values, labels=labels, autopct='%1.1f%%')
+    st.pyplot(fig)
+    st.markdown("### 🔥 Detection Heatmap")
+
+if st.session_state.detections:
+
+    heat_data = Counter(st.session_state.detections)
+
+    fig, ax = plt.subplots(figsize=(5, 2))
+    ax.imshow([list(heat_data.values())], cmap="Reds", aspect="auto")
+
+    ax.set_yticks([])
+    ax.set_xticks(range(len(heat_data)))
+    ax.set_xticklabels(list(heat_data.keys()), rotation=45)
+
+    st.pyplot(fig)
+    st.markdown("### ⏱ Detection Timeline")
+
+if st.session_state.timeline:
+
+    df = pd.DataFrame(st.session_state.timeline)
+
+    fig, ax = plt.subplots()
+
+    ax.plot(df["time"], df["count"], marker="o")
+
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Objects Detected")
+    ax.set_title("Detection Over Time")
+
+    st.pyplot(fig)

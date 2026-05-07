@@ -384,58 +384,42 @@ st.caption("Point your camera at objects to identify them in real-time")
 # 🔥 LIVE ANALYTICS
 metric1, metric2, metric3 = st.columns(3)
 
-# =========================
-# DETECTION FUNCTION (FIXED)
-# =========================
 def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
     
     start_time = time.time()
-
-    # ✔ KEEP ORIGINAL CLEAN RGB
     frame_rgb = np.array(frame)
 
-    # 🔥 BETTER SMALL OBJECT DETECTION
     if resize:
         frame_rgb = cv2.resize(frame_rgb, (1280, 720))
 
-    # ✔ CONVERT ONLY FOR YOLO INPUT
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
 
-    # =========================
-    # 🔥 ADVANCED TRACKING
-    # =========================
-    if st.session_state.ENABLE_TRACKING:
-        
-        results = model.predict(
-            source=frame_bgr,
-            conf=st.session_state.CONF,
-            iou=st.session_state.IOU,
-            max_det=st.session_state.MAX_DET,
-            verbose=False
-        )
-
-    else:
-
-        results = model.predict(
-            source=frame_bgr,
-            conf=st.session_state.CONF,
-            iou=st.session_state.IOU,
-            max_det=st.session_state.MAX_DET,
-            verbose=False
-        )
-
-    # ✔ YOLO OUTPUT
-    annotated_frame = results[0].plot()
-
-    # 🔥 FIX COLOR BACK TO RGB
-    annotated_frame = cv2.cvtColor(
-        annotated_frame,
-        cv2.COLOR_BGR2RGB
+    results = model.predict(
+        source=frame_bgr,
+        conf=st.session_state.CONF,
+        iou=st.session_state.IOU,
+        max_det=st.session_state.MAX_DET,
+        verbose=False
     )
 
     detected = []
 
     boxes = results[0].boxes
+
+    if boxes is not None and len(boxes) > 0:
+        for box in boxes:
+
+            cls = int(box.cls[0])
+            class_name = model.names[cls]
+
+            detected.append(class_name)
+
+    # =========================
+    # 🔥 OBJECT COUNTING (CORRECT PLACE)
+    # =========================
+    class_counts = Counter(detected)
+    total_objects = len(detected)
+    unique_objects = len(set(detected))
 
     # =========================
     # 🔥 SMART FILTERING

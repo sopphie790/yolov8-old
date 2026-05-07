@@ -199,6 +199,8 @@ def load_model():
     # 🔥 BETTER ACCURACY
     return YOLO("yolov8m.pt")
 
+model = load_model()
+
 # =========================
 # ANALYTICS STORAGE
 # =========================

@@ -259,7 +259,7 @@ if st.session_state.detections:
 
     heat_data = Counter(st.session_state.detections)
 
-    fig, ax = plt.subplots(figsize=(5, 2))
+    fig, ax = plt.subplots(figsize=(3, 2))
     ax.imshow([list(heat_data.values())], cmap="Reds", aspect="auto")
 
     ax.set_yticks([])

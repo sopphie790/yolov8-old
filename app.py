@@ -382,7 +382,7 @@ metric1, metric2, metric3 = st.columns(3)
 # =========================
 # DETECTION FUNCTION (FIXED)
 # =========================
-def detect(frame, record_analytics=False):
+def detect(frame, record_analytics=False, resize=True):
     
     start_time = time.time()
 
@@ -390,7 +390,8 @@ def detect(frame, record_analytics=False):
     frame_rgb = np.array(frame)
 
     # 🔥 BETTER SMALL OBJECT DETECTION
-    frame_rgb = cv2.resize(frame_rgb, (1280, 720))
+    if resize:
+        frame_rgb = cv2.resize(frame_rgb, (1280, 720))
 
     # ✔ CONVERT ONLY FOR YOLO INPUT
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)

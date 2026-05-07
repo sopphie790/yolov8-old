@@ -6,6 +6,7 @@ from PIL import Image
 import pandas as pd
 from collections import Counter
 import matplotlib.pyplot as plt
+import time
 
 # =========================
 # PAGE CONFIG
@@ -93,16 +94,13 @@ def load_model():
 model = load_model()
 
 # =========================
-# SESSION STATE
+# ANALYTICS STORAGE
 # =========================
 if "detections" not in st.session_state:
     st.session_state.detections = []
 
 if "timeline" not in st.session_state:
     st.session_state.timeline = []
-
-if "mode" not in st.session_state:
-    st.session_state.mode = "camera"
 
 # =========================
 # SIDEBAR
@@ -123,35 +121,10 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # =========================
-    # TRANSPARENT BUTTONS ONLY
-    # =========================
-    st.markdown("""
-    <style>
-    div[data-testid="stSidebar"] button {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        color: white !important;
-        font-weight: bold;
-        border-radius: 12px;
-        padding: 0.6rem;
-        backdrop-filter: blur(10px);
-        transition: 0.3s ease;
-    }
-
-    div[data-testid="stSidebar"] button:hover {
-        background: rgba(255, 255, 255, 0.25) !important;
-        transform: scale(1.03);
-        cursor: pointer;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    if st.button("📡 Live Camera"):
-        st.session_state.mode = "camera"
-
-    if st.button("🖼 Upload Image"):
-        st.session_state.mode = "upload"
+    mode = st.radio(
+        "📌 Select Mode",
+        ["📡 Live Camera", "🖼 Upload Image"]
+    )
 
     CONF = st.slider("🎯 Confidence", 0.3, 0.8, 0.5)
 
@@ -162,7 +135,7 @@ st.title("🎥 Live Object Detection & Tracing")
 st.caption("AI-powered real-time object detection system with YOLOv8")
 
 # =========================
-# DETECTION FUNCTION
+# DETECTION FUNCTION (FIXED)
 # =========================
 def detect(frame):
     
@@ -201,7 +174,7 @@ def detect(frame):
 # =========================
 # LIVE CAMERA
 # =========================
-if st.session_state.mode == "camera":
+if mode == "📡 Live Camera":
 
     st.subheader("📸 Camera Detection")
 
@@ -225,9 +198,9 @@ if st.session_state.mode == "camera":
         st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
-# UPLOAD IMAGE
+# IMAGE UPLOAD
 # =========================
-elif st.session_state.mode == "upload":
+elif mode == "🖼 Upload Image":
 
     st.subheader("🖼 Upload Detection")
 
@@ -251,8 +224,9 @@ elif st.session_state.mode == "upload":
         st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
-# ANALYTICS
+# 📊 ANALYTICS (FIXED & SYNCHED)
 # =========================
+
 st.markdown("### 📊 Object Distribution (Pie Chart)")
 
 if st.session_state.detections:
@@ -263,6 +237,49 @@ if st.session_state.detections:
 
     counter = Counter(all_objects)
 
-    fig, ax = plt.subplots(figsize=(3,3))
+    fig, ax = plt.subplots(figsize=(3, 3))
     ax.pie(counter.values(), labels=counter.keys(), autopct='%1.1f%%')
+    st.pyplot(fig)
+
+# =========================
+# 🔥 HEATMAP
+# =========================
+
+st.markdown("### 🔥 Detection Heatmap")
+
+if st.session_state.detections:
+
+    heat_objects = []
+    for d in st.session_state.detections:
+        heat_objects.extend(d["objects"])
+
+    heat_data = Counter(heat_objects)
+
+    fig, ax = plt.subplots(figsize=(3, 2))
+    ax.imshow([list(heat_data.values())], cmap="Reds", aspect="auto")
+
+    ax.set_yticks([])
+    ax.set_xticks(range(len(heat_data)))
+    ax.set_xticklabels(list(heat_data.keys()), rotation=45)
+
+    st.pyplot(fig)
+
+# =========================
+# ⏱ TIMELINE
+# =========================
+
+st.markdown("### ⏱ Detection Timeline")
+
+if st.session_state.timeline:
+
+    df = pd.DataFrame(st.session_state.timeline)
+
+    fig, ax = plt.subplots()
+
+    ax.plot(df["frame"], df["count"], marker="o")
+
+    ax.set_xlabel("Frame")
+    ax.set_ylabel("Objects Detected")
+    ax.set_title("Detection Over Time")
+
     st.pyplot(fig)

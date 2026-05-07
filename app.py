@@ -145,6 +145,47 @@ div[data-testid="stSidebar"] button:hover {
 div[data-testid="stSidebar"] button:active {
     background: rgba(255, 255, 255, 0.35) !important;
 }
+            <style>
+
+/* =========================
+   ACTIVE SIDEBAR BUTTON STATE
+========================= */
+
+/* default button style */
+div[data-testid="stSidebar"] button {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 0.6rem;
+    backdrop-filter: blur(10px);
+    transition: 0.25s ease;
+}
+
+/* hover effect */
+div[data-testid="stSidebar"] button:hover {
+    background: rgba(255, 255, 255, 0.28) !important;
+    transform: scale(1.03);
+    cursor: pointer;
+}
+
+/* ACTIVE BUTTON LOOK (STREAMLIT SELECTED STATE) */
+div[data-testid="stSidebar"] button[kind="primary"] {
+    background: linear-gradient(90deg, #ff4da6, #ff1a75) !important;
+    color: white !important;
+    border: 2px solid white !important;
+    box-shadow: 0px 0px 15px rgba(255, 20, 147, 0.6);
+}
+
+/* TEXT TRANSPARENCY CONTROL */
+div[data-testid="stSidebar"] button span {
+    color: rgba(255,255,255,0.85) !important;
+}
+
+div[data-testid="stSidebar"] button[kind="primary"] span {
+    color: white !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -304,12 +345,6 @@ elif mode == "🖼 Upload Image":
             st.image(result, caption="AI Detection")
 
         st.success(f"Detected Objects: {', '.join(set(detected))}")
-
-# =========================
-# 📊 ANALYTICS (FIXED & SYNCHED)
-# =========================
-
-st.markdown("### 📊 Object Distribution (Pie Chart)")
 
 # =========================
 # 📊 OBJECT DISTRIBUTION

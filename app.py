@@ -382,7 +382,7 @@ metric1, metric2, metric3 = st.columns(3)
 # =========================
 # DETECTION FUNCTION (FIXED)
 # =========================
-def detect(frame, record_analytics=False, resize=True):
+def detect(frame, record_analytics=False, min_conf=0.35):
     
     start_time = time.time()
 
@@ -390,8 +390,7 @@ def detect(frame, record_analytics=False, resize=True):
     frame_rgb = np.array(frame)
 
     # 🔥 BETTER SMALL OBJECT DETECTION
-    if resize:
-        frame_rgb = cv2.resize(frame_rgb, (1280, 720))
+    frame_rgb = cv2.resize(frame_rgb, (1280, 720))
 
     # ✔ CONVERT ONLY FOR YOLO INPUT
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
@@ -442,7 +441,7 @@ def detect(frame, record_analytics=False, resize=True):
             conf = float(box.conf[0])
 
             # 🔥 REMOVE FAKE DETECTIONS
-            if conf < 0.35:
+            if conf < min_conf:
                 continue
 
             cls = int(box.cls[0])
@@ -550,7 +549,7 @@ elif mode == "🖼 Upload Image":
         img = Image.open(file).convert("RGB")
         frame = np.array(img)
 
-        result, detected = detect(frame, record_analytics=True)
+        result, detected = detect(frame, record_analytics=True, min_conf=0.5)
 
         col1, col2 = st.columns(2)
 

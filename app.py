@@ -139,9 +139,11 @@ st.caption("AI-powered real-time object detection system with YOLOv8")
 # =========================
 def detect(frame):
     
-    frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+    frame_rgb = np.array(frame)
 
-    results = model.predict(frame, conf=CONF, verbose=False)
+    frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
+
+    results = model.predict(frame_bgr, conf=CONF, verbose=False)
 
     annotated_frame = results[0].plot()
 
@@ -154,7 +156,6 @@ def detect(frame):
             detected.append(model.names[int(c)])
 
     if len(detected) > 0:
-
         unique_detected = list(set(detected))
 
         st.session_state.detections.append({
@@ -169,59 +170,10 @@ def detect(frame):
 
         st.toast(f"🚨 Detected: {', '.join(unique_detected)}")
 
+    # 🔥 FIX COLOR BEFORE DISPLAY
+    annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
+
     return annotated_frame, detected
-
-# =========================
-# LIVE CAMERA
-# =========================
-if mode == "📡 Live Camera":
-
-    st.subheader("📸 Camera Detection")
-
-    camera = st.camera_input("Open Camera")
-
-    if camera is not None:
-
-        image = Image.open(camera).convert("RGB")
-        frame = np.array(image)
-
-        result, detected = detect(frame)
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.image(frame, caption="Original Image")
-
-        with col2:
-            st.image(result, caption="AI Detection")
-
-        st.success(f"Detected Objects: {', '.join(set(detected))}")
-
-# =========================
-# IMAGE UPLOAD
-# =========================
-elif mode == "🖼 Upload Image":
-
-    st.subheader("🖼 Upload Detection")
-
-    file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
-
-    if file is not None:
-
-        img = Image.open(file).convert("RGB")
-        frame = np.array(img)
-
-        result, detected = detect(frame)
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.image(frame, caption="Original Image")
-
-        with col2:
-            st.image(result, caption="AI Detection")
-
-        st.success(f"Detected Objects: {', '.join(set(detected))}")
 
 # =========================
 # 📊 ANALYTICS (FIXED & SYNCHED)

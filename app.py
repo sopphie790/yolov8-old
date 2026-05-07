@@ -178,7 +178,7 @@ def detect(frame):
 # =========================
 # IMAGE UPLOAD
 # =========================
-elif mode == "🖼 Upload Image":
+    elif mode == "🖼 Upload Image":
 
     st.subheader("🖼 Upload Detection")
 

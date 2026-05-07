@@ -282,3 +282,44 @@ if st.session_state.detections:
     fig, ax = plt.subplots(figsize=(3,3))
     ax.pie(counter.values(), labels=counter.keys(), autopct='%1.1f%%')
     st.pyplot(fig)
+# =========================
+# 🔥 HEATMAP
+# =========================
+st.markdown("### 🔥 Detection Heatmap")
+
+if st.session_state.detections:
+
+    all_objects = []
+    for d in st.session_state.detections:
+        all_objects.extend(d["objects"])
+
+    if all_objects:
+
+        heat = Counter(all_objects)
+
+        fig, ax = plt.subplots(figsize=(3,2))
+        ax.imshow([list(heat.values())], cmap="Reds", aspect="auto")
+        ax.set_yticks([])
+        ax.set_xticks(range(len(heat)))
+        ax.set_xticklabels(list(heat.keys()), rotation=45)
+
+        st.pyplot(fig)
+
+# =========================
+# ⏱ TIMELINE
+# =========================
+st.markdown("### ⏱ Detection Timeline")
+
+if st.session_state.timeline:
+
+    df = pd.DataFrame(st.session_state.timeline)
+
+    fig, ax = plt.subplots()
+
+    ax.plot(df["frame"], df["count"], marker="o")
+
+    ax.set_xlabel("Frame")
+    ax.set_ylabel("Objects Detected")
+    ax.set_title("Detection Over Time")
+
+    st.pyplot(fig)

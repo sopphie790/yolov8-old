@@ -197,7 +197,7 @@ div[data-testid="stSidebar"] button[kind="primary"] span {
 def load_model():
 
     # 🔥 BETTER ACCURACY
-    return YOLO("yolov8m.pt")
+    return YOLO("yolov8n.pt")
 
 model = load_model()
 
@@ -406,7 +406,7 @@ def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
     # =========================
     if st.session_state.ENABLE_TRACKING:
         
-        results = model.predict(
+        results = model.track(
             source=frame_bgr,
             conf=st.session_state.CONF,
             iou=st.session_state.IOU,
@@ -457,7 +457,7 @@ def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
             detected.append(class_name)
 
             # 🔥 TRACKING IDS
-            if ENABLE_TRACKING and box.id is not None:
+            if st.session_state.ENABLE_TRACKING and box.id is not None:
 
                 track_id = int(box.id[0])
 
@@ -477,20 +477,18 @@ def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
     # =========================
     if record_analytics and len(detected) > 0:
 
-        unique_detected = list(set(detected))
-
         st.session_state.detections.append({
             "frame": len(st.session_state.detections),
-            "objects": unique_detected
+            "objects": detected
         })
 
         st.session_state.timeline.append({
             "frame": len(st.session_state.timeline),
-            "objects": unique_detected,
-            "count": len(unique_detected)
+            "objects": detected,
+            "count": len(detected)
         })
 
-        st.toast(f"🚨 Detected: {', '.join(unique_detected)}")
+        st.toast(f"🚨 Detected: {', '.join(set(detected))}")
 
     # =========================
     # 🔥 LIVE METRICS

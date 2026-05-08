@@ -187,7 +187,7 @@ if mode == "📷 Live Camera":
             [f"{obj} ({count})" for obj, count in detection_summary.items()]
     )
 
-        st.success(f"Detected: {formatted}")
+st.success(f"Detected: {formatted}")
 
 # =========================
 # UPLOAD IMAGE FIXED
@@ -224,23 +224,13 @@ elif mode == "🖼 Upload Image":
 metric1.metric("⚡ FPS", st.session_state.fps)
 
 all_objects = []
+for d in st.session_state.detections:
+    all_objects.extend(d["objects"])
 
-for detection in st.session_state.detections:
-
-    if "objects" in detection:
-        all_objects.extend(detection["objects"])
-
-# 🔥 REAL OBJECT COUNTS
 counts = Counter(all_objects)
 
-# 🔥 TOTAL DETECTED OBJECTS
-total_objects = sum(counts.values())
-
-# 🔥 UNIQUE OBJECT TYPES
-unique_objects = len(counts)
-
-metric2.metric("🎯 Total Objects", total_objects)
-metric3.metric("🧠 Unique Objects", unique_objects)
+metric2.metric("🎯 Total Objects", sum(counts.values()))
+metric3.metric("🧠 Unique Objects", len(counts))
 
 # =========================
 # 📊 PIE CHART (FIXED SOURCE)
@@ -249,18 +239,9 @@ st.markdown("### 📊 Object Distribution")
 
 if counts:
 
-   fig, ax = plt.subplots(figsize=(5,5))
-
-ax.pie(
-    counts.values(),
-    labels=counts.keys(),
-    autopct='%1.1f%%',
-    startangle=90
-)
-
-ax.axis("equal")
-
-st.pyplot(fig)
+    fig, ax = plt.subplots()
+    ax.pie(counts.values(), labels=counts.keys(), autopct='%1.1f%%')
+    st.pyplot(fig)
 
 # =========================
 # 🔥 HEATMAP (FIXED SOURCE)
@@ -269,23 +250,14 @@ st.markdown("### 🔥 Detection Heatmap")
 
 if counts:
 
-    fig, ax = plt.subplots(figsize=(6,2))
+    fig, ax = plt.subplots()
+    ax.imshow([list(counts.values())], cmap="Reds", aspect="auto")
+    ax.set_xticks(range(len(counts)))
+    ax.set_xticklabels(list(counts.keys()), rotation=30)
+    ax.set_yticks([])
 
-heat_values = list(counts.values())
-heat_labels = list(counts.keys())
+    st.pyplot(fig)
 
-ax.imshow(
-    [heat_values],
-    cmap="Reds",
-    aspect="auto"
-)
-
-ax.set_xticks(range(len(heat_labels)))
-ax.set_xticklabels(heat_labels, rotation=25)
-
-ax.set_yticks([])
-
-st.pyplot(fig)
 # =========================
 # ⏱ TIMELINE (FIXED)
 # =========================
@@ -295,16 +267,7 @@ if st.session_state.timeline:
 
     df = pd.DataFrame(st.session_state.timeline)
 
-    fig, ax = plt.subplots(figsize=(6,3))
-
-    ax.plot(
-        df["frame"],
-        df["count"],
-        marker="o"
-    )
-
-    ax.set_xlabel("Frame")
-    ax.set_ylabel("Objects")
-    ax.set_title("Detection Timeline")
+    fig, ax = plt.subplots()
+    ax.plot(df["frame"], df["count"], marker="o")
 
     st.pyplot(fig)

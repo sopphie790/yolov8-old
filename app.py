@@ -648,14 +648,26 @@ st.markdown("### ⏱ Detection Timeline")
 
 if st.session_state.timeline:
 
-    df = pd.DataFrame(st.session_state.timeline)
+    # Collect all detected objects across all frames
+    timeline_objects = []
+    for item in st.session_state.timeline:
+        if "objects" in item:
+            timeline_objects.extend(item["objects"])
 
+    # Count frequency of each object type
+    timeline_counter = Counter(timeline_objects)
+
+    # Create bar chart showing object frequencies over time
     fig, ax = plt.subplots(figsize=(2.5, 2.5))
 
-    ax.plot(df["frame"], df["count"], marker="o", linestyle="-")
+    objects_list = list(timeline_counter.keys())
+    counts_list = list(timeline_counter.values())
 
-    ax.set_xlabel("Frame")
-    ax.set_ylabel("Objects Detected")
-    ax.set_title("Detection Over Time")
+    ax.bar(objects_list, counts_list, color='#ff69b4', edgecolor='#d63384', linewidth=1.5)
+
+    ax.set_xlabel("Object Type")
+    ax.set_ylabel("Detection Frequency")
+    ax.set_title("Detection Frequency Timeline")
+    ax.tick_params(axis='x', rotation=45)
 
     st.pyplot(fig)

@@ -292,16 +292,19 @@ st.pyplot(fig)
 st.markdown("### ⏱ Timeline")
 
 if st.session_state.timeline:
-fig, ax = plt.subplots(figsize=(6,3))
 
-ax.plot(
-    df["frame"],
-    df["count"],
-    marker="o"
-)
+    df = pd.DataFrame(st.session_state.timeline)
 
-ax.set_xlabel("Frame")
-ax.set_ylabel("Objects")
-ax.set_title("Detection Timeline")
+    fig, ax = plt.subplots(figsize=(6,3))
 
-st.pyplot(fig)
+    ax.plot(
+        df["frame"],
+        df["count"],
+        marker="o"
+    )
+
+    ax.set_xlabel("Frame")
+    ax.set_ylabel("Objects")
+    ax.set_title("Detection Timeline")
+
+    st.pyplot(fig)

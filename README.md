@@ -106,7 +106,7 @@ libswresample-dev
 
 🚀 Installation & Run
 1️⃣ Clone Repository
-git clone https://github.com/your-username/ai-surveillance-system.git
+git clone 
 cd ai-surveillance-system
 
 2️⃣ Install Requirements

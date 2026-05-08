@@ -110,7 +110,9 @@ git clone
 cd ai-surveillance-system
 
 2️⃣ Install Requirements
+pip install streamlit streamlit-webrtc ultralytics opencv-python av torch torchvision numpy pillow scipy matplotlib
 pip install -r requirements.txt
+
 
 💻 Windows Command Prompt
 Open Command Prompt

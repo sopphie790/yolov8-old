@@ -396,7 +396,7 @@ def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
 
     # 🔥 BETTER SMALL OBJECT DETECTION
     if resize:
-        frame_rgb = cv2.resize(frame_rgb, (440, 380))
+        frame_rgb = cv2.resize(frame_rgb, (280, 250))
 
     # ✔ CONVERT ONLY FOR YOLO INPUT
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)

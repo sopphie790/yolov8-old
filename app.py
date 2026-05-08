@@ -181,13 +181,7 @@ if mode == "📷 Live Camera":
         with col2:
             st.image(result)
 
-        detection_summary = Counter(detected)
-
-        formatted = ", ".join(
-            [f"{obj} ({count})" for obj, count in detection_summary.items()]
-    )
-
-st.success(f"Detected: {formatted}")
+        st.success(f"Detected: {set(detected)}")
 
 # =========================
 # UPLOAD IMAGE FIXED

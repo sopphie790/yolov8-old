@@ -396,7 +396,7 @@ def detect(frame, record_analytics=False, min_conf=0.35, resize=True):
 
     # 🔥 BETTER SMALL OBJECT DETECTION
     if resize:
-        frame_rgb = cv2.resize(frame_rgb, (1280, 720))
+        frame_rgb = cv2.resize(frame_rgb, (440, 380))
 
     # ✔ CONVERT ONLY FOR YOLO INPUT
     frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
@@ -677,7 +677,7 @@ if st.session_state.timeline:
     timeline_counter = Counter(timeline_objects)
 
     # Create bar chart showing object frequencies over time
-    fig, ax = plt.subplots(figsize=(2.5, 2.5))
+    fig, ax = plt.subplots(figsize=(2, 2))
 
     objects_list = list(timeline_counter.keys())
     counts_list = list(timeline_counter.values())

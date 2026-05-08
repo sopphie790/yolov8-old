@@ -196,8 +196,8 @@ div[data-testid="stSidebar"] button[kind="primary"] span {
 @st.cache_resource
 def load_model():
 
-    # 🔥 BETTER ACCURACY
-    return YOLO("yolov8n.pt")
+    # 🔥 BETTER ACCURACY - Download fresh model
+    return YOLO("yolov8n")
 
 model = load_model()
 

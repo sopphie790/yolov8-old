@@ -621,23 +621,37 @@ if st.session_state.detections:
 
     heat_data = Counter(heat_objects)
 
-    fig, ax = plt.subplots(figsize=(2.5, 2.5))
+    fig, ax = plt.subplots(figsize=(10, 4))
 
-    ax.imshow(
-        [list(heat_data.values())],
-        cmap="Reds",
-        aspect="auto"
+    objects_labels = list(heat_data.keys())
+    objects_counts = list(heat_data.values())
+
+    # Create heatmap visualization
+    heatmap_data = np.array([objects_counts])
+    
+    im = ax.imshow(
+        heatmap_data,
+        cmap="YlOrRd",
+        aspect="auto",
+        interpolation="bilinear"
     )
 
+    # Add colorbar for intensity scale
+    cbar = plt.colorbar(im, ax=ax, orientation="vertical", pad=0.02)
+    cbar.set_label("Detection Frequency", rotation=270, labelpad=20, fontsize=11, fontweight='bold')
+
+    # Configure axes
     ax.set_yticks([])
+    ax.set_xticks(range(len(objects_labels)))
+    ax.set_xticklabels(objects_labels, rotation=45, ha='right', fontsize=10, fontweight='bold')
+    ax.set_xlabel("Object Type", fontsize=11, fontweight='bold', color='#d63384')
+    ax.set_title("Real-Time Detection Intensity Map", fontsize=13, fontweight='bold', color='#d63384', pad=15)
 
-    ax.set_xticks(range(len(heat_data)))
+    # Add value labels on heatmap
+    for i, count in enumerate(objects_counts):
+        ax.text(i, 0, str(count), ha='center', va='center', color='black', fontweight='bold', fontsize=10)
 
-    ax.set_xticklabels(
-        list(heat_data.keys()),
-        rotation=35
-    )
-
+    plt.tight_layout()
     st.pyplot(fig)
 
 # =========================

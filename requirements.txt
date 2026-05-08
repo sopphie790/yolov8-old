@@ -7,3 +7,6 @@ ultralytics
 av
 pandas
 plotly
+lap
+scikit-learn
+scipy

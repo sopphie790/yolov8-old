@@ -521,6 +521,11 @@ if mode == "📷 Live Camera":
 
     if camera is not None:
 
+        # 🔥 RESET ANALYTICS (IMPORTANT FIX)
+        st.session_state.detections = []
+        st.session_state.timeline = []
+        st.session_state.unique_ids = set()
+
         image = Image.open(camera).convert("RGB")
         frame = np.array(image)
 
